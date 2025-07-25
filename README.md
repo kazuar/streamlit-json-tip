@@ -13,10 +13,38 @@ A Streamlit custom component for viewing JSON data with interactive tooltips and
 
 ## Installation
 
-1. Clone this repository
-2. Install in development mode:
+### From PyPI (Recommended)
+
+```bash
+pip install streamlit-json-tip
+```
+
+### From TestPyPI (Latest Development Version)
+
+```bash
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ streamlit-json-tip
+```
+
+### Development Setup
+
+1. Clone this repository:
    ```bash
-   pip install -e .
+   git clone https://github.com/isaac/streamlit-json-tip.git
+   cd streamlit-json-tip
+   ```
+
+2. Set up development environment with uv:
+   ```bash
+   # Install uv if you haven't already
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   
+   # Create virtual environment and install all dependencies (including dev dependencies)
+   uv sync
+   ```
+
+3. Run the example app:
+   ```bash
+   uv run streamlit run example_app.py
    ```
 
 ## Usage
@@ -83,22 +111,29 @@ Field paths use dot notation for objects and bracket notation for arrays:
 
 ### Frontend Development
 
-1. Navigate to the frontend directory:
+1. Set up the development environment (see Development Setup above)
+
+2. Navigate to the frontend directory:
    ```bash
    cd streamlit_json_tip/frontend
    ```
 
-2. Install dependencies:
+3. Install frontend dependencies:
    ```bash
    npm install
    ```
 
-3. Start development server:
+4. Start development server:
    ```bash
    npm start
    ```
 
-4. In your Python code, set `_RELEASE = False` in `__init__.py`
+5. In your Python code, set `_RELEASE = False` in `__init__.py`
+
+6. Run the example app in another terminal:
+   ```bash
+   uv run streamlit run example_app.py
+   ```
 
 ### Building for Production
 
@@ -110,16 +145,15 @@ Field paths use dot notation for objects and bracket notation for arrays:
 
 2. Set `_RELEASE = True` in `__init__.py`
 
-3. Build the package:
+3. Build the Python package:
    ```bash
-   python setup.py sdist bdist_wheel
+   uv run python -m build
    ```
 
-## Running the Example
-
-```bash
-streamlit run example_app.py
-```
+4. Upload to PyPI:
+   ```bash
+   uv run python -m twine upload dist/*
+   ```
 
 ## License
 
