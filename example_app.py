@@ -79,10 +79,75 @@ tags = {
     "metadata.version": "VERSION"
 }
 
-st.subheader("Interactive JSON Viewer")
+# Demo for dynamic tooltips
+st.subheader("Dynamic Tooltips Example")
+st.write("This example shows dynamic tooltips based on field values and context.")
+
+# Example data with dynamic scoring
+dynamic_data = [
+    {"name": "john", "spirit_animal": "dog", "age": 25},
+    {"name": "jake", "spirit_animal": "cow", "age": 30},
+    {"name": "alice", "spirit_animal": "cat", "age": 28}
+]
+
+# Dynamic tooltip function
+def create_dynamic_tooltip(path, value, full_data):
+    """Create custom tooltips based on field path, value, and context"""
+    
+    # Score tooltips for names based on length
+    if path.endswith(".name") and isinstance(value, str):
+        score = len(value) * 2  # Simple scoring: 2 points per character
+        return f"Name score: {score} points"
+    
+    # Age category tooltips
+    if path.endswith(".age") and isinstance(value, int):
+        if value < 25:
+            return "Category: Young Adult"
+        elif value < 30:
+            return "Category: Adult"
+        else:
+            return "Category: Mature Adult"
+    
+    # Spirit animal rarity tooltips
+    if path.endswith(".spirit_animal") and isinstance(value, str):
+        rarity_map = {
+            "dog": "Common (found in 60% of profiles)",
+            "cat": "Uncommon (found in 25% of profiles)", 
+            "cow": "Rare (found in 5% of profiles)",
+            "dragon": "Legendary (found in 0.1% of profiles)"
+        }
+        return rarity_map.get(value, "Unknown rarity")
+    
+    # Array element tooltips
+    if path.startswith("[") and "].name" in path:
+        # Extract index from path like "[0].name" 
+        try:
+            index = int(path.split("]")[0][1:])
+            return f"Person #{index + 1} in the list"
+        except:
+            pass
+    
+    return None
+
+st.write("**Dynamic Data:**")
+st.json(dynamic_data)
+
+selected_dynamic = json_viewer(
+    data=dynamic_data,
+    dynamic_tooltips=create_dynamic_tooltip,
+    height=300,
+    key="dynamic_tooltip_demo"
+)
+
+if selected_dynamic:
+    st.write(f"**Selected:** {selected_dynamic.get('path')} = {selected_dynamic.get('value')}")
+    if selected_dynamic.get('help_text'):
+        st.write(f"**Dynamic Tooltip:** {selected_dynamic.get('help_text')}")
+
+st.subheader("Static Tooltips Example")
 st.write("Click on any field to see its details. Hover over ℹ️ icons to see help text.")
 
-# Display the JSON viewer
+# Display the JSON viewer with static tooltips
 selected = json_viewer(
     data=sample_data,
     help_text=help_text,
@@ -122,29 +187,26 @@ st.subheader("Code Example")
 st.code('''
 from streamlit_json_viewer import json_viewer
 
-# Your JSON data
+# Static tooltips
 data = {"name": "John", "age": 30}
+help_text = {"name": "The person's full name", "age": "Age in years"}
+tags = {"name": "PII", "age": "DEMOGRAPHIC"}
 
-# Help text for fields
-help_text = {
-    "name": "The person's full name",
-    "age": "Age in years"
-}
+selected = json_viewer(data=data, help_text=help_text, tags=tags)
 
-# Tags for categorization
-tags = {
-    "name": "PII",
-    "age": "DEMOGRAPHIC"
-}
+# Dynamic tooltips
+users = [{"name": "john", "score": 85}, {"name": "jake", "score": 92}]
 
-# Display the viewer
-selected = json_viewer(
-    data=data,
-    help_text=help_text,
-    tags=tags,
-    height=400
-)
+def dynamic_tooltip(path, value, full_data):
+    if path.endswith(".name"):
+        # Find the score for this user
+        try:
+            index = int(path.split("]")[0][1:])  # Extract index from "[0].name"
+            score = full_data[index]["score"]
+            return f"Performance score: {score}/100"
+        except:
+            pass
+    return None
 
-if selected:
-    st.write(f"Selected: {selected}")
+selected = json_viewer(data=users, dynamic_tooltips=dynamic_tooltip)
 ''', language='python')
