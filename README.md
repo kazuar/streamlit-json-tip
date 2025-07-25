@@ -1,11 +1,11 @@
-# Streamlit JSON Viewer
+# Streamlit JSON Tip
 
-A Streamlit custom component for viewing JSON data with interactive help text and tags for individual fields.
+A Streamlit custom component for viewing JSON data with interactive tooltips and tags for individual fields.
 
 ## Features
 
 - 🔍 **Interactive JSON Viewer**: Expand/collapse objects and arrays
-- 📝 **Help Text**: Add contextual help for any field with hover tooltips
+- 📝 **Interactive Tooltips**: Add contextual help for any field with professional Tippy.js tooltips
 - 🏷️ **Field Tags**: Categorize fields with colored tags (PII, CONFIG, etc.)
 - 🎯 **Field Selection**: Click on fields to get detailed information
 - 🎨 **Syntax Highlighting**: Color-coded JSON with proper formatting
@@ -23,7 +23,7 @@ A Streamlit custom component for viewing JSON data with interactive help text an
 
 ```python
 import streamlit as st
-from streamlit_json_viewer import json_viewer
+from streamlit_json_tip import json_viewer
 
 # Your JSON data
 data = {
@@ -85,7 +85,7 @@ Field paths use dot notation for objects and bracket notation for arrays:
 
 1. Navigate to the frontend directory:
    ```bash
-   cd streamlit_json_viewer/frontend
+   cd streamlit_json_tip/frontend
    ```
 
 2. Install dependencies:
@@ -104,7 +104,7 @@ Field paths use dot notation for objects and bracket notation for arrays:
 
 1. Build the frontend:
    ```bash
-   cd streamlit_json_viewer/frontend
+   cd streamlit_json_tip/frontend
    npm run build
    ```
 

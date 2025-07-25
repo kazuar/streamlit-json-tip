@@ -1,9 +1,9 @@
 import streamlit as st
-from streamlit_json_viewer import json_viewer
+from streamlit_json_tip import json_viewer
 
-st.set_page_config(page_title="JSON Viewer Demo", layout="wide")
+st.set_page_config(page_title="JSON Tip Demo", layout="wide")
 
-st.title("🔍 JSON Viewer with Help Text and Tags")
+st.title("🔍 JSON Tip - Interactive JSON Viewer with Smart Tooltips")
 st.write("This demo shows how to use the JSON Viewer component with help text and tags for individual fields.")
 
 # Sample JSON data
@@ -294,7 +294,7 @@ st.write("""
 # Code example
 st.subheader("Code Example")
 st.code('''
-from streamlit_json_viewer import json_viewer
+from streamlit_json_tip import json_viewer
 
 # Static tooltips
 data = {"name": "John", "age": 30}

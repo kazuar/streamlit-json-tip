@@ -1,4 +1,4 @@
-include streamlit_json_viewer/frontend/build/static/js/*.js
-include streamlit_json_viewer/frontend/build/static/css/*.css
-include streamlit_json_viewer/frontend/build/*.html
-include streamlit_json_viewer/frontend/build/*.json
+include streamlit_json_tip/frontend/build/static/js/*.js
+include streamlit_json_tip/frontend/build/static/css/*.css
+include streamlit_json_tip/frontend/build/*.html
+include streamlit_json_tip/frontend/build/*.json

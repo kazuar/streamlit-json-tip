@@ -3,9 +3,9 @@ requires = ["setuptools>=45", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "streamlit-json-viewer"
+name = "streamlit-json-tip"
 version = "0.1.0"
-description = "A Streamlit custom component for viewing JSON with help text and tags"
+description = "A Streamlit custom component for viewing JSON with interactive tooltips and tags"
 authors = [
     {name = "Your Name", email = "your.email@example.com"}
 ]
