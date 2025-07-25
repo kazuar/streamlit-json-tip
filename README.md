@@ -2,7 +2,7 @@
 
 A Streamlit custom component for viewing JSON data with interactive tooltips and tags for individual fields.
 
-![Streamlit JSON Tip Example](resources/example.png)
+![Streamlit JSON Tip Example](https://raw.githubusercontent.com/isaac/streamlit-json-tip/main/resources/example.png)
 
 ## Features
 
