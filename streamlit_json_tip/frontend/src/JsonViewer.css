@@ -4,7 +4,6 @@
   line-height: 1.4;
   padding: 16px;
   background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
   border-radius: 4px;
   overflow: auto;
 }
@@ -141,7 +140,6 @@
 /* Dark mode styles */
 .json-viewer.dark-mode {
   background-color: #0e1117;
-  border: 1px solid #30363d;
   color: #f0f6fc;
 }
 
@@ -207,7 +205,6 @@
 /* Light mode styles (explicit for clarity) */
 .json-viewer.light-mode {
   background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
   color: #24292f;
 }
 
