@@ -2,6 +2,8 @@
 
 A Streamlit custom component for viewing JSON data with interactive tooltips and tags for individual fields.
 
+![Streamlit JSON Tip Example](resources/example.png)
+
 ## Features
 
 - 🔍 **Interactive JSON Viewer**: Expand/collapse objects and arrays

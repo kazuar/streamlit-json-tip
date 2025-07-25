@@ -12,7 +12,7 @@ function JsonViewer(props) {
   const [isInitialized, setIsInitialized] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   
-  const { data, help_text = {}, tags = {}, tooltip_config = {} } = props.args
+  const { data, help_text = {}, tags = {}, tooltip_config = {}, tooltip_icon = "ℹ️", tooltip_icons = {} } = props.args
 
   useEffect(() => {
     Streamlit.setFrameHeight()
@@ -163,7 +163,7 @@ function JsonViewer(props) {
                           {...tooltip_config}
                         >
                           <span className="help-text">
-                            ℹ️
+                            {tooltip_icons[itemPath] || tooltip_icon}
                           </span>
                         </Tippy>
                       )}
@@ -221,7 +221,7 @@ function JsonViewer(props) {
                           {...tooltip_config}
                         >
                           <span className="help-text">
-                            ℹ️
+                            {tooltip_icons[keyPath] || tooltip_icon}
                           </span>
                         </Tippy>
                       )}

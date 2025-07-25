@@ -90,40 +90,55 @@ dynamic_data = [
     {"name": "alice", "spirit_animal": "cat", "age": 28}
 ]
 
-# Dynamic tooltip function
+# Dynamic tooltip function with custom icons
 def create_dynamic_tooltip(path, value, full_data):
     """Create custom tooltips based on field path, value, and context"""
     
     # Score tooltips for names based on length
     if path.endswith(".name") and isinstance(value, str):
         score = len(value) * 2  # Simple scoring: 2 points per character
-        return f"Name score: {score} points"
+        return {
+            "text": f"Name score: {score} points",
+            "icon": "👤"
+        }
     
     # Age category tooltips
     if path.endswith(".age") and isinstance(value, int):
         if value < 25:
-            return "Category: Young Adult"
+            return {
+                "text": "Category: Young Adult",
+                "icon": "🟢"
+            }
         elif value < 30:
-            return "Category: Adult"
+            return {
+                "text": "Category: Adult", 
+                "icon": "🟡"
+            }
         else:
-            return "Category: Mature Adult"
+            return {
+                "text": "Category: Mature Adult",
+                "icon": "🟠"
+            }
     
     # Spirit animal rarity tooltips
     if path.endswith(".spirit_animal") and isinstance(value, str):
         rarity_map = {
-            "dog": "Common (found in 60% of profiles)",
-            "cat": "Uncommon (found in 25% of profiles)", 
-            "cow": "Rare (found in 5% of profiles)",
-            "dragon": "Legendary (found in 0.1% of profiles)"
+            "dog": {"text": "Common (found in 60% of profiles)", "icon": "🐕"},
+            "cat": {"text": "Uncommon (found in 25% of profiles)", "icon": "🐱"}, 
+            "cow": {"text": "Rare (found in 5% of profiles)", "icon": "🐄"},
+            "dragon": {"text": "Legendary (found in 0.1% of profiles)", "icon": "🐉"}
         }
-        return rarity_map.get(value, "Unknown rarity")
+        return rarity_map.get(value, {"text": "Unknown rarity", "icon": "❓"})
     
     # Array element tooltips
     if path.startswith("[") and "].name" in path:
         # Extract index from path like "[0].name" 
         try:
             index = int(path.split("]")[0][1:])
-            return f"Person #{index + 1} in the list"
+            return {
+                "text": f"Person #{index + 1} in the list",
+                "icon": "🔢"
+            }
         except:
             pass
     
@@ -159,6 +174,7 @@ with tab1:
         data=sample_data,
         help_text=help_text,
         tags=tags,
+        tooltip_icon="💡",  # Custom global icon
         height=400,
         key="default_config"
     ) or None
@@ -231,19 +247,28 @@ advanced_data = {
 def advanced_tooltip(path, value, data):
     if path.endswith("_usage"):
         if value > 80:
-            return f"⚠️ Critical: {value}% - Immediate attention required"
+            return {
+                "text": f"Critical: {value}% - Immediate attention required",
+                "icon": "🚨"
+            }
         elif value > 60:
-            return f"⚡ Warning: {value}% - Monitor closely"
+            return {
+                "text": f"Warning: {value}% - Monitor closely", 
+                "icon": "⚠️"
+            }
         else:
-            return f"✅ Normal: {value}% - Operating within limits"
+            return {
+                "text": f"Normal: {value}% - Operating within limits",
+                "icon": "✅"
+            }
     
     if path.endswith(".level"):
         level_info = {
-            "warning": "⚠️ Requires attention - investigate potential issues",
-            "error": "🚨 Critical - immediate action needed",
-            "info": "ℹ️ Informational - no action required"
+            "warning": {"text": "Requires attention - investigate potential issues", "icon": "⚠️"},
+            "error": {"text": "Critical - immediate action needed", "icon": "🚨"},
+            "info": {"text": "Informational - no action required", "icon": "ℹ️"}
         }
-        return level_info.get(value, "Unknown alert level")
+        return level_info.get(value, {"text": "Unknown alert level", "icon": "❓"})
     
     return None
 
@@ -296,28 +321,35 @@ st.subheader("Code Example")
 st.code('''
 from streamlit_json_tip import json_viewer
 
-# Static tooltips
+# Static tooltips with custom icon
 data = {"name": "John", "age": 30}
 help_text = {"name": "The person's full name", "age": "Age in years"}
 
-selected = json_viewer(data=data, help_text=help_text)
+selected = json_viewer(data=data, help_text=help_text, tooltip_icon="💡")
 
-# Dynamic tooltips
+# Dynamic tooltips with custom icons per field
 users = [{"name": "john", "score": 85}, {"name": "jake", "score": 92}]
 
-def dynamic_tooltip(path, value, full_data):
+def dynamic_tooltip_with_icons(path, value, full_data):
     if path.endswith(".name"):
-        index = int(path.split("]")[0][1:])
-        score = full_data[index]["score"]
-        return f"Performance score: {score}/100"
+        return {
+            "text": f"Name length: {len(value)} characters",
+            "icon": "👤"
+        }
+    elif path.endswith(".score"):
+        return {
+            "text": f"Performance score: {value}/100",
+            "icon": "📊" if value >= 80 else "⚠️"
+        }
     return None
 
-selected = json_viewer(data=users, dynamic_tooltips=dynamic_tooltip)
+selected = json_viewer(data=users, dynamic_tooltips=dynamic_tooltip_with_icons)
 
-# Custom tooltip configuration
+# Custom tooltip configuration with global icon
 json_viewer(
     data=data,
     help_text=help_text,
+    tooltip_icon="❓",              # Global tooltip icon
     tooltip_config={
         "placement": "right",           # Position: top, bottom, left, right, auto
         "animation": "scale",           # Animation: fade, shift-away, scale, etc.
