@@ -7,18 +7,36 @@ name = "streamlit-json-tip"
 version = "0.1.0"
 description = "A Streamlit custom component for viewing JSON with interactive tooltips and tags"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Isaac", email = "isaac@example.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.8"
+license = {text = "MIT"}
+keywords = ["streamlit", "json", "viewer", "tooltip", "component", "interactive"]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Scientific/Engineering :: Information Analysis",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
     "streamlit>=1.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/isaac/streamlit-json-tip"
+Documentation = "https://github.com/isaac/streamlit-json-tip#readme"
+Repository = "https://github.com/isaac/streamlit-json-tip"
+"Bug Tracker" = "https://github.com/isaac/streamlit-json-tip/issues"
 
 [project.optional-dependencies]
 dev = [
