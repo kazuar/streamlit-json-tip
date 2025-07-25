@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "streamlit-json-tip"
-version = "0.2.1"
+version = "0.2.2"
 description = "A Streamlit custom component for viewing JSON with interactive tooltips and tags"
 authors = [
     {name = "Isaac", email = "isaac@example.com"}
