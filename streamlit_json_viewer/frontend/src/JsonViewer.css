@@ -1,0 +1,270 @@
+.json-viewer {
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  overflow: auto;
+}
+
+.json-object, .json-array {
+  margin-left: 0;
+}
+
+.json-object-content, .json-array-content {
+  margin-left: 20px;
+  border-left: 1px solid #dee2e6;
+  padding-left: 12px;
+}
+
+.json-object-item, .json-array-item {
+  margin: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.json-key {
+  color: #0066cc;
+  font-weight: 500;
+  min-width: fit-content;
+}
+
+.json-index {
+  color: #666;
+  font-weight: 500;
+  min-width: fit-content;
+}
+
+.json-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.json-field.clickable:hover {
+  background-color: #e3f2fd;
+  cursor: pointer;
+}
+
+.json-string {
+  color: #22863a;
+}
+
+.json-number {
+  color: #005cc5;
+}
+
+.json-boolean {
+  color: #d73a49;
+  font-weight: 500;
+}
+
+.json-null {
+  color: #6f42c1;
+  font-style: italic;
+}
+
+.json-bracket {
+  color: #24292e;
+  font-weight: bold;
+  user-select: none;
+}
+
+.json-node-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.expand-arrow {
+  color: #666;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 3px;
+  transition: all 0.2s;
+  user-select: none;
+  min-width: 16px;
+  text-align: center;
+}
+
+.expand-arrow:hover {
+  background-color: #e3f2fd;
+  color: #0066cc;
+}
+
+.json-closing-bracket {
+  margin-left: -20px;
+  padding-left: 20px;
+}
+
+.json-summary {
+  color: #586069;
+  font-style: italic;
+  margin-left: 8px;
+}
+
+.help-text {
+  font-size: 12px;
+  cursor: help;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.help-text:hover {
+  opacity: 1;
+}
+
+.tag {
+  background-color: #0969da;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+/* Dark mode styles */
+.json-viewer.dark-mode {
+  background-color: #0e1117;
+  border: 1px solid #30363d;
+  color: #f0f6fc;
+}
+
+.json-viewer.dark-mode .json-object-content,
+.json-viewer.dark-mode .json-array-content {
+  border-left: 1px solid #30363d;
+}
+
+.json-viewer.dark-mode .json-key {
+  color: #79c0ff;
+}
+
+.json-viewer.dark-mode .json-index {
+  color: #8b949e;
+}
+
+.json-viewer.dark-mode .json-field.clickable:hover {
+  background-color: #21262d;
+}
+
+.json-viewer.dark-mode .json-string {
+  color: #a5d6ff;
+}
+
+.json-viewer.dark-mode .json-number {
+  color: #79c0ff;
+}
+
+.json-viewer.dark-mode .json-boolean {
+  color: #ff7b72;
+}
+
+.json-viewer.dark-mode .json-null {
+  color: #d2a8ff;
+}
+
+.json-viewer.dark-mode .json-bracket {
+  color: #f0f6fc;
+}
+
+.json-viewer.dark-mode .expand-arrow {
+  color: #8b949e;
+}
+
+.json-viewer.dark-mode .expand-arrow:hover {
+  background-color: #21262d;
+  color: #79c0ff;
+}
+
+.json-viewer.dark-mode .json-summary {
+  color: #8b949e;
+}
+
+.json-viewer.dark-mode .help-text {
+  color: #8b949e;
+}
+
+.json-viewer.dark-mode .tag {
+  background-color: #1f6feb;
+  color: #ffffff;
+}
+
+/* Light mode styles (explicit for clarity) */
+.json-viewer.light-mode {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  color: #24292f;
+}
+
+.json-viewer.light-mode .json-object-content,
+.json-viewer.light-mode .json-array-content {
+  border-left: 1px solid #dee2e6;
+}
+
+.json-viewer.light-mode .json-key {
+  color: #0066cc;
+}
+
+.json-viewer.light-mode .json-index {
+  color: #666;
+}
+
+.json-viewer.light-mode .json-field.clickable:hover {
+  background-color: #e3f2fd;
+}
+
+.json-viewer.light-mode .json-string {
+  color: #22863a;
+}
+
+.json-viewer.light-mode .json-number {
+  color: #005cc5;
+}
+
+.json-viewer.light-mode .json-boolean {
+  color: #d73a49;
+}
+
+.json-viewer.light-mode .json-null {
+  color: #6f42c1;
+}
+
+.json-viewer.light-mode .json-bracket {
+  color: #24292e;
+}
+
+.json-viewer.light-mode .expand-arrow {
+  color: #666;
+}
+
+.json-viewer.light-mode .expand-arrow:hover {
+  background-color: #e3f2fd;
+  color: #0066cc;
+}
+
+.json-viewer.light-mode .json-summary {
+  color: #586069;
+}
+
+.json-viewer.light-mode .help-text {
+  color: #666;
+}
+
+.json-viewer.light-mode .tag {
+  background-color: #0969da;
+  color: white;
+}
