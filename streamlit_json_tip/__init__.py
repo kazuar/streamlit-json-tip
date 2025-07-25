@@ -19,6 +19,7 @@ def json_viewer(
     tags=None,
     dynamic_tooltips=None,
     tooltip_config=None,
+    tooltip_icon="ℹ️",
     height=400,
     key=None
 ):
@@ -34,7 +35,10 @@ def json_viewer(
     tags : dict, optional
         Dictionary mapping field paths to tags/labels
     dynamic_tooltips : function, optional
-        Function that takes (field_path, field_value, full_data) and returns tooltip text
+        Function that takes (field_path, field_value, full_data) and returns tooltip text or dict.
+        Can return:
+        - str: tooltip text (uses default icon)
+        - dict: {"text": str, "icon": str} for custom tooltip text and icon
     tooltip_config : dict, optional
         Configuration for Tippy.js tooltips. Available options:
         - placement: str, default "top" (top, bottom, left, right, auto)
@@ -47,6 +51,8 @@ def json_viewer(
         - trigger: str, default "mouseenter focus" (events that trigger tooltip)
         - hideOnClick: bool, default True
         - sticky: bool, default False (tooltip follows cursor)
+    tooltip_icon : str, optional
+        Default icon to display for tooltips (default: "ℹ️")
     height : int, optional
         Height of the component in pixels (default: 400)
     key : str, optional
@@ -70,10 +76,11 @@ def json_viewer(
     
     json_viewer(data, dynamic_tooltips=dynamic_tooltip)
     
-    # Custom tooltip configuration
+    # Custom tooltip configuration with custom icon
     json_viewer(
         data=data,
         help_text=help_text,
+        tooltip_icon="❓",
         tooltip_config={
             "placement": "right",
             "animation": "scale", 
@@ -82,25 +89,54 @@ def json_viewer(
             "maxWidth": 200
         }
     )
+    
+    # Dynamic tooltips with custom icons
+    def dynamic_tooltip_with_icons(path, value, data):
+        if path.endswith(".name"):
+            return {
+                "text": f"Name length: {len(value)} characters",
+                "icon": "👤"
+            }
+        elif path.endswith(".score"):
+            return {
+                "text": f"Score: {value}/100",
+                "icon": "📊" if value >= 80 else "⚠️"
+            }
+        return None
+    
+    json_viewer(data=users, dynamic_tooltips=dynamic_tooltip_with_icons)
     """
     # Pre-compute dynamic tooltips if function provided
     computed_help_text = help_text.copy() if help_text else {}
+    computed_tooltip_icons = {}
     
     if dynamic_tooltips and callable(dynamic_tooltips):
         def _collect_tooltips(obj, current_path=""):
             if isinstance(obj, dict):
                 for key, value in obj.items():
                     field_path = f"{current_path}.{key}" if current_path else key
-                    tooltip = dynamic_tooltips(field_path, value, data)
-                    if tooltip:
-                        computed_help_text[field_path] = tooltip
+                    tooltip_result = dynamic_tooltips(field_path, value, data)
+                    if tooltip_result:
+                        if isinstance(tooltip_result, dict):
+                            if "text" in tooltip_result:
+                                computed_help_text[field_path] = tooltip_result["text"]
+                            if "icon" in tooltip_result:
+                                computed_tooltip_icons[field_path] = tooltip_result["icon"]
+                        else:
+                            computed_help_text[field_path] = tooltip_result
                     _collect_tooltips(value, field_path)
             elif isinstance(obj, list):
                 for i, item in enumerate(obj):
                     field_path = f"{current_path}[{i}]"
-                    tooltip = dynamic_tooltips(field_path, item, data)
-                    if tooltip:
-                        computed_help_text[field_path] = tooltip
+                    tooltip_result = dynamic_tooltips(field_path, item, data)
+                    if tooltip_result:
+                        if isinstance(tooltip_result, dict):
+                            if "text" in tooltip_result:
+                                computed_help_text[field_path] = tooltip_result["text"]
+                            if "icon" in tooltip_result:
+                                computed_tooltip_icons[field_path] = tooltip_result["icon"]
+                        else:
+                            computed_help_text[field_path] = tooltip_result
                     _collect_tooltips(item, field_path)
         
         _collect_tooltips(data)
@@ -129,6 +165,8 @@ def json_viewer(
         help_text=computed_help_text,
         tags=tags or {},
         tooltip_config=final_tooltip_config,
+        tooltip_icon=tooltip_icon,
+        tooltip_icons=computed_tooltip_icons,
         height=height,
         key=key,
         default=None
