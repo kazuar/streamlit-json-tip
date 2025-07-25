@@ -18,6 +18,7 @@ def json_viewer(
     help_text=None,
     tags=None,
     dynamic_tooltips=None,
+    tooltip_config=None,
     height=400,
     key=None
 ):
@@ -34,6 +35,18 @@ def json_viewer(
         Dictionary mapping field paths to tags/labels
     dynamic_tooltips : function, optional
         Function that takes (field_path, field_value, full_data) and returns tooltip text
+    tooltip_config : dict, optional
+        Configuration for Tippy.js tooltips. Available options:
+        - placement: str, default "top" (top, bottom, left, right, auto)
+        - arrow: bool, default True
+        - animation: str, default "fade" (fade, shift-away, shift-toward, scale, perspective)
+        - delay: int|list, default 0 (delay in ms, or [show_delay, hide_delay])
+        - duration: int|list, default [300, 250] (animation duration)
+        - interactive: bool, default False (allow hovering over tooltip)
+        - maxWidth: int, default 350 (max width in pixels)
+        - trigger: str, default "mouseenter focus" (events that trigger tooltip)
+        - hideOnClick: bool, default True
+        - sticky: bool, default False (tooltip follows cursor)
     height : int, optional
         Height of the component in pixels (default: 400)
     key : str, optional
@@ -49,13 +62,26 @@ def json_viewer(
     # Static tooltips
     json_viewer(data, help_text={"user.name": "The user's display name"})
     
-    # Dynamic tooltips based on field value
+    # Dynamic tooltips
     def dynamic_tooltip(path, value, data):
-        if path.endswith(".name") and isinstance(value, str):
+        if path.endswith(".name"):
             return f"Name length: {len(value)} characters"
         return None
     
     json_viewer(data, dynamic_tooltips=dynamic_tooltip)
+    
+    # Custom tooltip configuration
+    json_viewer(
+        data=data,
+        help_text=help_text,
+        tooltip_config={
+            "placement": "right",
+            "animation": "scale", 
+            "delay": [500, 0],
+            "interactive": True,
+            "maxWidth": 200
+        }
+    )
     """
     # Pre-compute dynamic tooltips if function provided
     computed_help_text = help_text.copy() if help_text else {}
@@ -79,10 +105,30 @@ def json_viewer(
         
         _collect_tooltips(data)
     
+    # Set default tooltip configuration
+    default_tooltip_config = {
+        "placement": "top",
+        "arrow": True,
+        "animation": "fade",
+        "delay": 0,
+        "duration": [300, 250],
+        "interactive": False,
+        "maxWidth": 350,
+        "trigger": "mouseenter focus",
+        "hideOnClick": True,
+        "sticky": False
+    }
+    
+    # Merge user config with defaults
+    final_tooltip_config = default_tooltip_config.copy()
+    if tooltip_config:
+        final_tooltip_config.update(tooltip_config)
+    
     component_value = _component_func(
         data=data,
         help_text=computed_help_text,
         tags=tags or {},
+        tooltip_config=final_tooltip_config,
         height=height,
         key=key,
         default=None

@@ -144,33 +144,142 @@ if selected_dynamic:
     if selected_dynamic.get('help_text'):
         st.write(f"**Dynamic Tooltip:** {selected_dynamic.get('help_text')}")
 
-st.subheader("Static Tooltips Example")
-st.write("Click on any field to see its details. Hover over ℹ️ icons to see help text.")
+st.subheader("Tooltip Configuration Examples")
+st.write("Different tooltip configurations using Tippy.js options:")
 
-# Display the JSON viewer with static tooltips
-selected = json_viewer(
-    data=sample_data,
-    help_text=help_text,
-    tags=tags,
-    height=500,
-    key="json_viewer_demo"
-)
+# Initialize selection variables
+selected1 = selected2 = selected3 = selected4 = selected_advanced = None
 
-# Show selected field information
-if selected:
+# Create tabs for different configurations
+tab1, tab2, tab3, tab4 = st.tabs(["Default", "Interactive", "Animated", "Positioned"])
+
+with tab1:
+    st.write("**Default Configuration**: Standard tooltips with fade animation")
+    selected1 = json_viewer(
+        data=sample_data,
+        help_text=help_text,
+        tags=tags,
+        height=400,
+        key="default_config"
+    ) or None
+
+with tab2:
+    st.write("**Interactive Tooltips**: Hoverable tooltips with custom styling")
+    selected2 = json_viewer(
+        data=sample_data,
+        help_text=help_text,
+        tags=tags,
+        tooltip_config={
+            "interactive": True,
+            "delay": [200, 100],
+            "maxWidth": 300,
+            "hideOnClick": False,
+            "trigger": "mouseenter"
+        },
+        height=400,
+        key="interactive_config"
+    ) or None
+
+with tab3:
+    st.write("**Animated Tooltips**: Scale animation with custom timing")
+    selected3 = json_viewer(
+        data=sample_data,
+        help_text=help_text,
+        tags=tags,
+        tooltip_config={
+            "animation": "scale",
+            "duration": [400, 200],
+            "delay": 300,
+            "arrow": True
+        },
+        height=400,
+        key="animated_config"
+    ) or None
+
+with tab4:
+    st.write("**Positioned Tooltips**: Right-side placement with custom width")
+    selected4 = json_viewer(
+        data=sample_data,
+        help_text=help_text,
+        tags=tags,
+        tooltip_config={
+            "placement": "right",
+            "maxWidth": 200,
+            "animation": "shift-away",
+            "sticky": True
+        },
+        height=400,
+        key="positioned_config"
+    ) or None
+
+st.subheader("Advanced Example: Context-Aware Tooltips")
+st.write("Combining dynamic tooltips with custom configuration:")
+
+# Advanced example with both dynamic tooltips and custom config
+advanced_data = {
+    "performance": {
+        "cpu_usage": 85.2,
+        "memory_usage": 67.8,
+        "disk_usage": 45.3
+    },
+    "alerts": [
+        {"level": "warning", "message": "High CPU usage detected"},
+        {"level": "info", "message": "System running normally"}
+    ]
+}
+
+def advanced_tooltip(path, value, data):
+    if path.endswith("_usage"):
+        if value > 80:
+            return f"⚠️ Critical: {value}% - Immediate attention required"
+        elif value > 60:
+            return f"⚡ Warning: {value}% - Monitor closely"
+        else:
+            return f"✅ Normal: {value}% - Operating within limits"
+    
+    if path.endswith(".level"):
+        level_info = {
+            "warning": "⚠️ Requires attention - investigate potential issues",
+            "error": "🚨 Critical - immediate action needed",
+            "info": "ℹ️ Informational - no action required"
+        }
+        return level_info.get(value, "Unknown alert level")
+    
+    return None
+
+selected_advanced = json_viewer(
+    data=advanced_data,
+    dynamic_tooltips=advanced_tooltip,
+    tooltip_config={
+        "placement": "auto",
+        "interactive": True,
+        "maxWidth": 350,
+        "animation": "shift-toward",
+        "delay": [100, 50],
+        "duration": [300, 200]
+    },
+    height=350,
+    key="advanced_tooltip_demo"
+) or None
+
+# Show selected field information from any of the viewers
+selected_fields = [selected1, selected2, selected3, selected4, selected_advanced]
+active_selection = next((sel for sel in selected_fields if sel), None)
+
+if active_selection:
     st.subheader("Selected Field Information")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.write("**Path:**", selected.get("path"))
-        st.write("**Value:**", selected.get("value"))
+        st.write("**Path:**", active_selection.get("path"))
+        st.write("**Value:**", active_selection.get("value"))
     
     with col2:
-        if selected.get("help_text"):
-            st.write("**Help Text:**", selected.get("help_text"))
-        if selected.get("tag"):
-            st.write("**Tag:**", selected.get("tag"))
+        if active_selection.get("help_text"):
+            st.write("**Help Text:**", active_selection.get("help_text"))
+        if active_selection.get("tag"):
+            st.write("**Tag:**", active_selection.get("tag"))
 
 # Instructions
 st.subheader("How to Use")
@@ -190,23 +299,32 @@ from streamlit_json_viewer import json_viewer
 # Static tooltips
 data = {"name": "John", "age": 30}
 help_text = {"name": "The person's full name", "age": "Age in years"}
-tags = {"name": "PII", "age": "DEMOGRAPHIC"}
 
-selected = json_viewer(data=data, help_text=help_text, tags=tags)
+selected = json_viewer(data=data, help_text=help_text)
 
 # Dynamic tooltips
 users = [{"name": "john", "score": 85}, {"name": "jake", "score": 92}]
 
 def dynamic_tooltip(path, value, full_data):
     if path.endswith(".name"):
-        # Find the score for this user
-        try:
-            index = int(path.split("]")[0][1:])  # Extract index from "[0].name"
-            score = full_data[index]["score"]
-            return f"Performance score: {score}/100"
-        except:
-            pass
+        index = int(path.split("]")[0][1:])
+        score = full_data[index]["score"]
+        return f"Performance score: {score}/100"
     return None
 
 selected = json_viewer(data=users, dynamic_tooltips=dynamic_tooltip)
+
+# Custom tooltip configuration
+json_viewer(
+    data=data,
+    help_text=help_text,
+    tooltip_config={
+        "placement": "right",           # Position: top, bottom, left, right, auto
+        "animation": "scale",           # Animation: fade, shift-away, scale, etc.
+        "delay": [300, 100],           # [show_delay, hide_delay] in ms
+        "interactive": True,            # Allow hovering over tooltip
+        "maxWidth": 250,               # Max width in pixels
+        "sticky": True                 # Tooltip follows cursor
+    }
+)
 ''', language='python')
