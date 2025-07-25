@@ -3,6 +3,8 @@ import {
   Streamlit,
   withStreamlitConnection,
 } from "streamlit-component-lib"
+import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 import "./JsonViewer.css"
 
 function JsonViewer(props) {
@@ -155,9 +157,16 @@ function JsonViewer(props) {
                     >
                       {renderValue(item, itemPath)}
                       {help_text[itemPath] && (
-                        <span className="help-text" title={help_text[itemPath]}>
-                          ℹ️
-                        </span>
+                        <Tippy 
+                          content={help_text[itemPath]}
+                          theme={isDarkMode ? 'dark' : 'light'}
+                          arrow={true}
+                          placement="top"
+                        >
+                          <span className="help-text">
+                            ℹ️
+                          </span>
+                        </Tippy>
                       )}
                       {tags[itemPath] && (
                         <span className="tag">{tags[itemPath]}</span>
@@ -207,9 +216,16 @@ function JsonViewer(props) {
                     >
                       {renderValue(value[key], keyPath)}
                       {help_text[keyPath] && (
-                        <span className="help-text" title={help_text[keyPath]}>
-                          ℹ️
-                        </span>
+                        <Tippy 
+                          content={help_text[keyPath]}
+                          theme={isDarkMode ? 'dark' : 'light'}
+                          arrow={true}
+                          placement="top"
+                        >
+                          <span className="help-text">
+                            ℹ️
+                          </span>
+                        </Tippy>
                       )}
                       {tags[keyPath] && (
                         <span className="tag">{tags[keyPath]}</span>

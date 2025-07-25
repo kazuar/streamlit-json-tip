@@ -116,6 +116,7 @@
   cursor: help;
   opacity: 0.7;
   transition: opacity 0.2s;
+  display: inline-block;
 }
 
 .help-text:hover {
@@ -267,4 +268,27 @@
 .json-viewer.light-mode .tag {
   background-color: #0969da;
   color: white;
+}
+
+/* Tippy.js tooltip customizations */
+.tippy-box[data-theme~='dark'] {
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  color: #f0f6fc;
+}
+
+.tippy-box[data-theme~='light'] {
+  background-color: #ffffff;
+  border: 1px solid #d0d7de;
+  color: #24292f;
+  box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+}
+
+.tippy-arrow::before {
+  border-color: inherit;
+}
+
+/* Custom help text icon styling */
+.help-text {
+  user-select: none;
 }
