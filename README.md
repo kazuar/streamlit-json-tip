@@ -15,7 +15,18 @@ A Streamlit custom component for viewing JSON data with interactive tooltips and
 
 ## Installation
 
-### From PyPI (Recommended)
+### With uv (Recommended)
+
+```bash
+uv add streamlit-json-tip
+```
+
+Or for a one-off script:
+```bash
+uv run --with streamlit-json-tip streamlit run your_app.py
+```
+
+### With pip
 
 ```bash
 pip install streamlit-json-tip
@@ -23,6 +34,12 @@ pip install streamlit-json-tip
 
 ### From TestPyPI (Latest Development Version)
 
+With uv:
+```bash
+uv add --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ streamlit-json-tip
+```
+
+With pip:
 ```bash
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ streamlit-json-tip
 ```
