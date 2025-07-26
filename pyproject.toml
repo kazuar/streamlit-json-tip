@@ -38,21 +38,14 @@ Documentation = "https://github.com/isaac/streamlit-json-tip#readme"
 Repository = "https://github.com/isaac/streamlit-json-tip"
 "Bug Tracker" = "https://github.com/isaac/streamlit-json-tip/issues"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "build",
     "twine",
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "pytest-mock>=3.10.0",
-]
-
-[tool.uv]
-dev-dependencies = [
     "pytest>=8.3.5",
     "pytest-cov>=5.0.0",
     "pytest-mock>=3.14.1",
-    "streamlit>=1.0.0",
+    "streamlit>=1.0.0"
 ]
 
 [tool.pytest.ini_options]

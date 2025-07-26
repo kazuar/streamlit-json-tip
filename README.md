@@ -48,6 +48,22 @@ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://
 
 ### Development Setup
 
+#### Prerequisites
+
+* Install task
+
+```bash
+brew install go-task/tap/go-task
+```
+
+* Install uv
+
+```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+#### Build repo
+
 1. Clone this repository:
    ```bash
    git clone https://github.com/isaac/streamlit-json-tip.git
@@ -56,9 +72,6 @@ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://
 
 2. Set up development environment with uv:
    ```bash
-   # Install uv if you haven't already
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   
    # Create virtual environment and install all dependencies (including dev dependencies)
    uv sync
    ```
@@ -213,7 +226,7 @@ The project includes convenient uv scripts for common development tasks:
 
 #### Frontend Development
 ```bash
-uv run build-frontend        # Build React frontend for production
+task build-frontend
 ```
 
 #### Package Building
@@ -225,19 +238,8 @@ uv run build-check           # Build + validate package with twine
 
 #### Publishing
 ```bash
-uv run publish-test          # Build + upload to TestPyPI
-uv run publish               # Build + upload to PyPI
-```
-
-#### Complete Workflow
-```bash
-uv run release-test          # Build frontend + publish to TestPyPI
-uv run release               # Build frontend + publish to PyPI (production)
-```
-
-For a complete release, simply run:
-```bash
-uv run release
+task release-test          # Build + upload to TestPyPI
+task release               # Build + upload to PyPI
 ```
 
 This will build the frontend, package the Python distribution, validate it, and upload to PyPI.
@@ -309,8 +311,7 @@ If you prefer manual releases or need to troubleshoot:
 
 ```bash
 # Build everything
-uv run build-frontend
-uv run build
+task build
 
 # Upload to PyPI manually
 export TWINE_PASSWORD=your_pypi_token_here

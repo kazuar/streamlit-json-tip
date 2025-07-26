@@ -31,7 +31,6 @@ jobs:
     - name: Install Python dependencies
       run: |
         uv sync --dev
-        uv add --dev build twine
 
     - name: Install frontend dependencies
       run: |

@@ -3,15 +3,22 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
 
 tasks:
-  default:
-    cmds:
-      - echo "{{.GREETING}}"
-    silent: true
   test:
     cmds:
       - uv run pytest
       - cd streamlit_json_tip/frontend && npm test -- --coverage --ci --watchAll=false
-  
+  build:
+    cmds:
+      - cd streamlit_json_tip/frontend && npm run build
+      - cd {{.USER_WORKING_DIR}} && uv run python -m build
+  build-frontend:
+    cmds:
+      - cd streamlit_json_tip/frontend && npm run build
+  build-backend:
+    cmds:
+      - cd {{.USER_WORKING_DIR}} && uv run python -m build
+  release:
+    cmds:
+      - TWINE_PASSWORD={{.PYPI_TOKEN}} python -m twine upload --username __token__ dist/*
