@@ -157,6 +157,41 @@ Field paths use dot notation for objects and bracket notation for arrays:
    uv run python -m twine upload dist/*
    ```
 
+### Build Scripts
+
+The project includes convenient uv scripts for common development tasks:
+
+#### Frontend Development
+```bash
+uv run build-frontend        # Build React frontend for production
+```
+
+#### Package Building
+```bash
+uv run clean                 # Clean build artifacts
+uv run build                 # Clean + build Python package
+uv run build-check           # Build + validate package with twine
+```
+
+#### Publishing
+```bash
+uv run publish-test          # Build + upload to TestPyPI
+uv run publish               # Build + upload to PyPI
+```
+
+#### Complete Workflow
+```bash
+uv run release-test          # Build frontend + publish to TestPyPI
+uv run release               # Build frontend + publish to PyPI (production)
+```
+
+For a complete release, simply run:
+```bash
+uv run release
+```
+
+This will build the frontend, package the Python distribution, validate it, and upload to PyPI.
+
 ## License
 
 MIT License
