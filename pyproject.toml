@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "streamlit-json-tip"
-version = "0.2.2"
+version = "0.2.3"
 description = "A Streamlit custom component for viewing JSON with interactive tooltips and tags"
 authors = [
     {name = "Isaac", email = "isaac@example.com"}
@@ -49,19 +49,3 @@ dev-dependencies = [
     "streamlit>=1.0.0",
 ]
 
-[tool.uv.scripts]
-# Frontend build
-build-frontend = "cd streamlit_json_tip/frontend && npm run build"
-
-# Package building
-clean = "rm -rf dist/ build/ streamlit_json_tip.egg-info/"
-build = ["clean", "uv run python -m build"]
-build-check = ["build", "uv run python -m twine check dist/*"]
-
-# Publishing
-publish-test = ["build-check", "uv run python -m twine upload --repository testpypi dist/*"]
-publish = ["build-check", "uv run python -m twine upload dist/*"]
-
-# Full workflow
-release = ["build-frontend", "publish"]
-release-test = ["build-frontend", "publish-test"]
