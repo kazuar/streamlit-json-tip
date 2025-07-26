@@ -29,7 +29,9 @@ jobs:
       uses: astral-sh/setup-uv@v3
 
     - name: Install Python dependencies
-      run: uv sync --dev
+      run: |
+        uv sync --dev
+        uv add --dev build twine
 
     - name: Install frontend dependencies
       run: |
