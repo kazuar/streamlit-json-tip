@@ -42,10 +42,28 @@ Repository = "https://github.com/isaac/streamlit-json-tip"
 dev = [
     "build",
     "twine",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
 ]
 
 [tool.uv]
 dev-dependencies = [
+    "pytest>=8.3.5",
+    "pytest-cov>=5.0.0",
+    "pytest-mock>=3.14.1",
     "streamlit>=1.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--cov=streamlit_json_tip",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-fail-under=70",
 ]
 

@@ -10,3 +10,8 @@ tasks:
     cmds:
       - echo "{{.GREETING}}"
     silent: true
+  test:
+    cmds:
+      - uv run pytest
+      - cd streamlit_json_tip/frontend && npm test -- --coverage --ci --watchAll=false
+  
