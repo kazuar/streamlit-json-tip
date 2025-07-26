@@ -32,7 +32,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         uv sync --dev
-        uv add --dev build twine
+        uv add --dev build twine pytest pytest-cov pytest-mock
 
     - name: Install frontend dependencies
       run: |
@@ -51,6 +51,14 @@ jobs:
       run: |
         uv run pip install dist/*.whl
         uv run python -c "import streamlit_json_tip; print('Package imported successfully')"
+
+    - name: Run Python unit tests
+      run: uv run pytest
+
+    - name: Run frontend tests
+      run: |
+        cd streamlit_json_tip/frontend
+        npm test -- --coverage --ci --watchAll=false
 
     - name: Test example app (syntax check)
       run: uv run python -m py_compile example_app.py

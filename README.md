@@ -154,6 +154,37 @@ Field paths use dot notation for objects and bracket notation for arrays:
    uv run streamlit run example_app.py
    ```
 
+### Running Tests
+
+#### Python Tests
+```bash
+# Run all Python unit tests with coverage
+uv run pytest
+
+# Run tests with verbose output
+uv run pytest -v
+
+# Generate HTML coverage report
+uv run pytest --cov-report=html
+```
+
+#### Frontend Tests
+```bash
+cd streamlit_json_tip/frontend
+
+# Run Jest tests once
+npm test -- --ci --watchAll=false
+
+# Run tests with coverage
+npm test -- --coverage --ci --watchAll=false
+
+# Run tests in watch mode (for development)
+npm test
+```
+
+#### Run All Tests
+Both Python and frontend tests run automatically in GitHub Actions on every push and pull request.
+
 ### Building for Production
 
 1. Build the frontend:
