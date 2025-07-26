@@ -40,6 +40,10 @@ coverage.xml
 *.cover
 .hypothesis/
 
+# Frontend testing
+*/coverage/
+coverage/
+
 # IDEs
 .vscode/
 .idea/
