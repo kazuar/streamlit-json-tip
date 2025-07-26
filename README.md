@@ -192,6 +192,81 @@ uv run release
 
 This will build the frontend, package the Python distribution, validate it, and upload to PyPI.
 
+## Releasing a New Version
+
+This project uses automated GitHub Actions for releases. Follow these steps to release a new version:
+
+### 1. Update Version and Changelog
+
+1. **Update the version** in `pyproject.toml`:
+   ```toml
+   version = "0.2.5"  # Increment according to semver
+   ```
+
+2. **Add changelog entry** in `CHANGELOG.md`:
+   ```markdown
+   ## [0.2.5] - 2025-01-26
+
+   ### ✨ Added
+   - New feature description
+
+   ### 🔧 Fixed  
+   - Bug fix description
+   ```
+
+3. **Commit your changes**:
+   ```bash
+   git add pyproject.toml CHANGELOG.md
+   git commit -m "Bump version to 0.2.5"
+   git push origin main
+   ```
+
+### 2. Create and Push Release Tag
+
+```bash
+git tag v0.2.5
+git push origin v0.2.5
+```
+
+### 3. Automated Release Process
+
+Once you push the tag, GitHub Actions will automatically:
+
+- ✅ Build the frontend (React components)
+- ✅ Build the Python package (wheel + source distribution)
+- ✅ Extract changelog section for this version
+- ✅ Create GitHub Release with changelog as release notes
+- ✅ Upload distribution files as release assets
+- ✅ Publish to PyPI
+
+### 4. Monitor the Release
+
+1. **Check GitHub Actions**: Go to the Actions tab to monitor the release workflow
+2. **Verify GitHub Release**: Check that the release was created with proper changelog
+3. **Verify PyPI**: Confirm the new version appears on PyPI
+
+### Setup Requirements (One-time)
+
+To use automated releases, you need:
+
+1. **PyPI API Token**: Add `PYPI_API_TOKEN` to your repository secrets
+   - Go to: Repository → Settings → Secrets and variables → Actions
+   - Add your PyPI token as `PYPI_API_TOKEN`
+
+### Manual Release (Alternative)
+
+If you prefer manual releases or need to troubleshoot:
+
+```bash
+# Build everything
+uv run build-frontend
+uv run build
+
+# Upload to PyPI manually
+export TWINE_PASSWORD=your_pypi_token_here
+python -m twine upload --username __token__ dist/*
+```
+
 ## License
 
 MIT License
