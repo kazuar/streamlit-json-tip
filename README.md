@@ -8,7 +8,7 @@
 
 A Streamlit custom component for viewing JSON data with interactive tooltips and tags for individual fields.
 
-![Streamlit JSON Tip Example](https://gist.github.com/kazuar/a33a82e702354f5da0f89bcd848632b9/raw/82a847a11de01d7e3340343035ce2fa20ac0da48/example.png)
+![Streamlit JSON Tip Example](https://github.com/kazuar/streamlit-json-tip/blob/main/resources/example.png?raw=true)
 
 ## Features
 
