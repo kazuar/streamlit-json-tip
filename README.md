@@ -1,6 +1,10 @@
 # Streamlit JSON Tip
 
 [![PyPI version](https://badge.fury.io/py/streamlit-json-tip.svg)](https://pypi.org/project/streamlit-json-tip/)
+[![Python Support](https://img.shields.io/pypi/pyversions/streamlit-json-tip.svg)](https://pypi.org/project/streamlit-json-tip/)
+[![License](https://img.shields.io/pypi/l/streamlit-json-tip.svg)](https://github.com/kazuar/streamlit-json-tip/blob/main/LICENSE)
+[![Tests](https://github.com/kazuar/streamlit-json-tip/workflows/Test/badge.svg)](https://github.com/kazuar/streamlit-json-tip/actions/workflows/test.yml)
+[![Downloads](https://pepy.tech/badge/streamlit-json-tip)](https://pepy.tech/project/streamlit-json-tip)
 
 A Streamlit custom component for viewing JSON data with interactive tooltips and tags for individual fields.
 
