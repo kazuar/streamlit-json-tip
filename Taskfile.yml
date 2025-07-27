@@ -22,3 +22,6 @@ tasks:
   release:
     cmds:
       - TWINE_PASSWORD={{.PYPI_TOKEN}} python -m twine upload --username __token__ dist/*
+  example:
+    cmds:
+      - uv run streamlit run example_app.py
