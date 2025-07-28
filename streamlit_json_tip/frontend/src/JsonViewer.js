@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback, useMemo } from "react"
 import {
   Streamlit,
   withStreamlitConnection,
@@ -55,59 +55,74 @@ function JsonViewer(props) {
     }
   }, [])
 
+  // Memoize the path calculation to avoid recalculating on every render
+  const allPaths = useMemo(() => {
+    if (!data) return new Set()
+    
+    const getAllPaths = (obj, currentPath = "") => {
+      const paths = new Set()
+      
+      if (Array.isArray(obj)) {
+        paths.add(currentPath)
+        obj.forEach((item, index) => {
+          const itemPath = `${currentPath}[${index}]`
+          if (typeof item === "object" && item !== null) {
+            const childPaths = getAllPaths(item, itemPath)
+            childPaths.forEach(path => paths.add(path))
+          }
+        })
+      } else if (typeof obj === "object" && obj !== null) {
+        paths.add(currentPath)
+        Object.keys(obj).forEach(key => {
+          const keyPath = currentPath ? `${currentPath}.${key}` : key
+          if (typeof obj[key] === "object" && obj[key] !== null) {
+            const childPaths = getAllPaths(obj[key], keyPath)
+            childPaths.forEach(path => paths.add(path))
+          }
+        })
+      }
+      
+      return paths
+    }
+    
+    return getAllPaths(data)
+  }, [data])
+
   useEffect(() => {
     // Auto-expand all nodes by default, but only on first load
     if (data && !isInitialized) {
-      const getAllPaths = (obj, currentPath = "") => {
-        const paths = new Set()
-        
-        if (Array.isArray(obj)) {
-          paths.add(currentPath)
-          obj.forEach((item, index) => {
-            const itemPath = `${currentPath}[${index}]`
-            if (typeof item === "object" && item !== null) {
-              const childPaths = getAllPaths(item, itemPath)
-              childPaths.forEach(path => paths.add(path))
-            }
-          })
-        } else if (typeof obj === "object" && obj !== null) {
-          paths.add(currentPath)
-          Object.keys(obj).forEach(key => {
-            const keyPath = currentPath ? `${currentPath}.${key}` : key
-            if (typeof obj[key] === "object" && obj[key] !== null) {
-              const childPaths = getAllPaths(obj[key], keyPath)
-              childPaths.forEach(path => paths.add(path))
-            }
-          })
-        }
-        
-        return paths
-      }
-      
-      const allPaths = getAllPaths(data)
       setExpandedPaths(allPaths)
       setIsInitialized(true)
     }
-  }, [data, isInitialized])
+  }, [data, isInitialized, allPaths])
 
-  const toggleExpanded = (path) => {
-    const newExpanded = new Set(expandedPaths)
-    if (newExpanded.has(path)) {
-      newExpanded.delete(path)
-    } else {
-      newExpanded.add(path)
-    }
-    setExpandedPaths(newExpanded)
-  }
+  const toggleExpanded = useCallback((path) => {
+    // Prevent event from bubbling up and causing unwanted side effects
+    setExpandedPaths(prevExpanded => {
+      const newExpanded = new Set(prevExpanded)
+      if (newExpanded.has(path)) {
+        newExpanded.delete(path)
+      } else {
+        newExpanded.add(path)
+      }
+      
+      // Ensure the frame height is updated after state change but don't trigger component value change
+      setTimeout(() => {
+        Streamlit.setFrameHeight()
+      }, 0)
+      
+      return newExpanded
+    })
+  }, [])
 
-  const handleFieldClick = (path, value) => {
+  const handleFieldClick = useCallback((path, value) => {
     Streamlit.setComponentValue({
       path: path,
       value: value,
       help_text: help_text[path] || null,
       tag: tags[path] || null
     })
-  }
+  }, [help_text, tags])
 
   const renderValue = (value, path = "") => {
     if (value === null) {
@@ -134,7 +149,11 @@ function JsonViewer(props) {
           <div className="json-node-header">
             <span 
               className="expand-arrow"
-              onClick={() => toggleExpanded(path)}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                toggleExpanded(path)
+              }}
             >
               {isExpanded ? '▼' : '▶'}
             </span>
@@ -192,7 +211,11 @@ function JsonViewer(props) {
           <div className="json-node-header">
             <span 
               className="expand-arrow"
-              onClick={() => toggleExpanded(path)}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                toggleExpanded(path)
+              }}
             >
               {isExpanded ? '▼' : '▶'}
             </span>
