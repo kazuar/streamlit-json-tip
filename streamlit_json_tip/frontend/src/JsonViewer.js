@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react"
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react"
 import {
   Streamlit,
   withStreamlitConnection,
@@ -12,7 +12,15 @@ function JsonViewer(props) {
   const [isInitialized, setIsInitialized] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   
-  const { data, help_text = {}, tags = {}, tooltip_config = {}, tooltip_icon = "ℹ️", tooltip_icons = {} } = props.args
+  const { 
+    data, 
+    help_text = {}, 
+    tags = {}, 
+    tooltip_config = {}, 
+    tooltip_icon = "ℹ️", 
+    tooltip_icons = {},
+    enable_field_selection = true
+  } = props.args
 
   useEffect(() => {
     Streamlit.setFrameHeight()
@@ -115,7 +123,15 @@ function JsonViewer(props) {
     })
   }, [])
 
+  // Ref to store timeout for debouncing
+  const fieldClickTimeoutRef = useRef(null)
+
   const handleFieldClick = useCallback((path, value, event) => {
+    // Skip field selection entirely if disabled
+    if (!enable_field_selection) {
+      return
+    }
+    
     // Only trigger selection if it's actually a deliberate click on the field content,
     // not accidental clicks on tooltips or other elements
     if (event && (event.target.classList.contains('help-text') || 
@@ -123,13 +139,30 @@ function JsonViewer(props) {
       return // Don't trigger selection for tooltip clicks
     }
     
-    Streamlit.setComponentValue({
-      path: path,
-      value: value,
-      help_text: help_text[path] || null,
-      tag: tags[path] || null
-    })
-  }, [help_text, tags])
+    // Clear any existing timeout
+    if (fieldClickTimeoutRef.current) {
+      clearTimeout(fieldClickTimeoutRef.current)
+    }
+    
+    // Debounce the field selection to prevent rapid refreshes
+    fieldClickTimeoutRef.current = setTimeout(() => {
+      Streamlit.setComponentValue({
+        path: path,
+        value: value,
+        help_text: help_text[path] || null,
+        tag: tags[path] || null
+      })
+    }, 500) // 500ms delay to reduce refresh frequency
+  }, [help_text, tags, enable_field_selection])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (fieldClickTimeoutRef.current) {
+        clearTimeout(fieldClickTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const renderValue = (value, path = "") => {
     if (value === null) {
@@ -178,7 +211,7 @@ function JsonViewer(props) {
                   <div key={index} className="json-array-item">
                     <span className="json-index">{index}:</span>
                     <div 
-                      className="json-field clickable"
+                      className={`json-field ${enable_field_selection ? 'clickable' : ''}`}
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
@@ -250,7 +283,7 @@ function JsonViewer(props) {
                   <div key={key} className="json-object-item">
                     <span className="json-key">"{key}":</span>
                     <div 
-                      className="json-field clickable"
+                      className={`json-field ${enable_field_selection ? 'clickable' : ''}`}
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()

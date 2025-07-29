@@ -227,6 +227,16 @@ def dynamic_tooltip(path, value, data):
 st.subheader("📊 Interactive JSON Viewer")
 st.markdown("🎯 **Try this:** Fill out the form above, then expand/collapse JSON nodes below. Your form data should remain intact!")
 
+# Add field selection toggle
+field_selection_enabled = st.checkbox(
+    "Enable field selection", 
+    value=False, 
+    help="When enabled, clicking on field values will trigger selection (may cause page refresh). When disabled, no refreshes occur."
+)
+
+if not field_selection_enabled:
+    st.info("💡 Field selection is disabled - clicking on values won't refresh the page!")
+
 # Create columns for layout
 col1, col2 = st.columns([2, 1])
 
@@ -244,6 +254,7 @@ with col1:
             "interactive": True,
             "maxWidth": 400
         },
+        enable_field_selection=field_selection_enabled,  # Control field selection
         height=600,
         key="json_viewer_demo"  # Add a key for better state management
     )
