@@ -115,7 +115,14 @@ function JsonViewer(props) {
     })
   }, [])
 
-  const handleFieldClick = useCallback((path, value) => {
+  const handleFieldClick = useCallback((path, value, event) => {
+    // Only trigger selection if it's actually a deliberate click on the field content,
+    // not accidental clicks on tooltips or other elements
+    if (event && (event.target.classList.contains('help-text') || 
+                  event.target.closest('.help-text'))) {
+      return // Don't trigger selection for tooltip clicks
+    }
+    
     Streamlit.setComponentValue({
       path: path,
       value: value,
@@ -172,7 +179,11 @@ function JsonViewer(props) {
                     <span className="json-index">{index}:</span>
                     <div 
                       className="json-field clickable"
-                      onClick={() => handleFieldClick(itemPath, item)}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleFieldClick(itemPath, item, e)
+                      }}
                     >
                       {renderValue(item, itemPath)}
                       {help_text[itemPath] && (
@@ -181,7 +192,13 @@ function JsonViewer(props) {
                           theme={isDarkMode ? 'dark' : 'light'}
                           {...tooltip_config}
                         >
-                          <span className="help-text">
+                          <span 
+                            className="help-text"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                            }}
+                          >
                             {tooltip_icons[itemPath] || tooltip_icon}
                           </span>
                         </Tippy>
@@ -234,7 +251,11 @@ function JsonViewer(props) {
                     <span className="json-key">"{key}":</span>
                     <div 
                       className="json-field clickable"
-                      onClick={() => handleFieldClick(keyPath, value[key])}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleFieldClick(keyPath, value[key], e)
+                      }}
                     >
                       {renderValue(value[key], keyPath)}
                       {help_text[keyPath] && (
