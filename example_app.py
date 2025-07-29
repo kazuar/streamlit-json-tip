@@ -1,362 +1,319 @@
 import streamlit as st
 from streamlit_json_tip import json_viewer
 
-st.set_page_config(page_title="JSON Tip Demo", layout="wide")
+st.set_page_config(page_title="JSON Viewer with Tooltips", layout="wide")
 
-st.title("🔍 JSON Tip - Interactive JSON Viewer with Smart Tooltips")
-st.write("This demo shows how to use the JSON Viewer component with help text and tags for individual fields.")
+st.title("🔍 Streamlit JSON Tip - Interactive JSON Viewer")
 
-# Sample JSON data
-sample_data = {
+st.markdown("""
+This component provides an interactive JSON viewer with tooltips and tags for individual fields.
+Click on the ℹ️ icons to see tooltips, and click on any field to select it.
+
+**Test the expand/collapse functionality** - it should NOT refresh the page or reset other inputs!
+""")
+
+# Add input fields to test that expand/collapse doesn't cause page refresh
+st.subheader("🧪 State Preservation Test")
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    user_input = st.text_input("Type something here:", placeholder="This should not reset when expanding/collapsing JSON")
+    counter = st.number_input("Counter:", value=0, step=1)
+
+with col2:
+    selected_option = st.selectbox("Choose an option:", ["Option 1", "Option 2", "Option 3"])
+    slider_value = st.slider("Slider value:", 0, 100, 50)
+
+with col3:
+    checkbox_state = st.checkbox("Check me")
+    radio_choice = st.radio("Radio buttons:", ["A", "B", "C"])
+
+# Display current state
+if user_input or counter != 0 or selected_option != "Option 1" or slider_value != 50 or checkbox_state or radio_choice != "A":
+    st.success(f"✅ State preserved: Input='{user_input}', Counter={counter}, Select='{selected_option}', Slider={slider_value}, Checkbox={checkbox_state}, Radio='{radio_choice}'")
+else:
+    st.info("👆 Interact with the controls above, then expand/collapse JSON nodes below to test state preservation")
+
+st.markdown("---")
+
+# Sample data
+data = {
     "user": {
+        "name": "Alice Johnson",
+        "email": "alice@company.com",
         "id": 12345,
-        "name": "John Doe",
-        "email": "john.doe@example.com",
-        "profile": {
-            "avatar_url": "https://example.com/avatar.jpg",
-            "bio": "Software developer",
-            "location": "San Francisco, CA"
-        },
+        "role": "admin",
+        "last_login": "2024-01-15T10:30:00Z",
         "preferences": {
             "theme": "dark",
             "notifications": True,
             "language": "en"
-        }
-    },
-    "posts": [
-        {
-            "id": 1,
-            "title": "Hello World",
-            "content": "This is my first post!",
-            "published": True,
-            "tags": ["intro", "welcome"]
         },
-        {
-            "id": 2,
-            "title": "Learning Streamlit",
-            "content": "Streamlit is amazing for building data apps!",
-            "published": False,
-            "tags": ["streamlit", "python", "data"]
+        "permissions": ["read", "write", "admin"]
+    },
+    "system": {
+        "version": "2.1.0",
+        "environment": "production",
+        "uptime": 99.9,
+        "memory_usage": 0.78,
+        "cpu_usage": 0.45
+    },
+    "metrics": {
+        "requests_per_second": 1250,
+        "response_time_ms": 45,
+        "error_rate": 0.001,
+        "active_connections": 892
+    },
+    "config": {
+        "database": {
+            "host": "db.company.com",
+            "port": 5432,
+            "ssl": True,
+            "pool_size": 20
+        },
+        "redis": {
+            "host": "cache.company.com", 
+            "port": 6379,
+            "timeout": 5000
+        },
+        "features": {
+            "new_ui": True,
+            "beta_features": False,
+            "analytics": True
         }
-    ],
-    "metadata": {
-        "created_at": "2024-01-15T10:30:00Z",
-        "last_updated": "2024-01-20T15:45:00Z",
-        "version": "1.2.0"
     }
 }
 
-# Help text for specific fields
+# Help text for tooltips
 help_text = {
-    "user.id": "Unique identifier for the user account",
-    "user.name": "Full display name of the user",
-    "user.email": "Primary email address for account notifications",
-    "user.profile.avatar_url": "URL to the user's profile picture",
-    "user.profile.bio": "Short biography or description",
+    "user.name": "Full name of the user",
+    "user.email": "Primary email address for notifications",
+    "user.id": "Unique user identifier in the system",
+    "user.role": "User's permission level (admin, user, guest)",
+    "user.last_login": "Timestamp of user's last login",
     "user.preferences.theme": "UI theme preference (light/dark)",
-    "user.preferences.notifications": "Whether to receive email notifications",
-    "posts[0].published": "Whether this post is visible to the public",
-    "posts[1].published": "Whether this post is visible to the public",
-    "metadata.created_at": "ISO timestamp of account creation",
-    "metadata.version": "Current API version"
+    "user.preferences.notifications": "Whether user receives notifications",
+    "user.preferences.language": "User's preferred language code",
+    "user.permissions": "List of user's system permissions",
+    "system.version": "Current application version",
+    "system.environment": "Deployment environment",
+    "system.uptime": "System uptime percentage",
+    "system.memory_usage": "Current memory usage as decimal (0.78 = 78%)",
+    "system.cpu_usage": "Current CPU usage as decimal",
+    "metrics.requests_per_second": "Average requests handled per second",
+    "metrics.response_time_ms": "Average response time in milliseconds",
+    "metrics.error_rate": "Error rate as decimal (0.001 = 0.1%)",
+    "metrics.active_connections": "Number of active client connections",
+    "config.database.host": "Database server hostname",
+    "config.database.port": "Database connection port",
+    "config.database.ssl": "Whether SSL encryption is enabled",
+    "config.database.pool_size": "Maximum database connection pool size",
+    "config.redis.host": "Redis cache server hostname",
+    "config.redis.port": "Redis server port",
+    "config.redis.timeout": "Connection timeout in milliseconds",
+    "config.features.new_ui": "Whether new UI is enabled",
+    "config.features.beta_features": "Whether beta features are enabled",
+    "config.features.analytics": "Whether analytics tracking is enabled"
 }
 
 # Tags for categorizing fields
 tags = {
-    "user.id": "PII",
     "user.name": "PII",
-    "user.email": "PII",
-    "user.profile.avatar_url": "URL",
-    "user.preferences.theme": "CONFIG",
-    "user.preferences.notifications": "CONFIG",
-    "user.preferences.language": "CONFIG",
-    "posts[0].published": "STATUS",
-    "posts[1].published": "STATUS",
-    "posts[0].tags": "METADATA",
-    "posts[1].tags": "METADATA",
-    "metadata.created_at": "TIMESTAMP",
-    "metadata.last_updated": "TIMESTAMP",
-    "metadata.version": "VERSION"
+    "user.email": "PII", 
+    "user.id": "ID",
+    "user.role": "AUTH",
+    "user.permissions": "AUTH",
+    "system.version": "INFO",
+    "system.environment": "CONFIG",
+    "system.uptime": "METRIC", 
+    "system.memory_usage": "METRIC",
+    "system.cpu_usage": "METRIC",
+    "metrics.requests_per_second": "METRIC",
+    "metrics.response_time_ms": "METRIC", 
+    "metrics.error_rate": "METRIC",
+    "metrics.active_connections": "METRIC",
+    "config.database.host": "CONFIG",
+    "config.database.port": "CONFIG",
+    "config.database.ssl": "SECURITY",
+    "config.redis.host": "CONFIG",
+    "config.redis.port": "CONFIG",
+    "config.features.new_ui": "FEATURE",
+    "config.features.beta_features": "FEATURE",
+    "config.features.analytics": "FEATURE"
 }
 
-# Demo for dynamic tooltips
-st.subheader("Dynamic Tooltips Example")
-st.write("This example shows dynamic tooltips based on field values and context.")
-
-# Example data with dynamic scoring
-dynamic_data = [
-    {"name": "john", "spirit_animal": "dog", "age": 25},
-    {"name": "jake", "spirit_animal": "cow", "age": 30},
-    {"name": "alice", "spirit_animal": "cat", "age": 28}
-]
-
-# Dynamic tooltip function with custom icons
-def create_dynamic_tooltip(path, value, full_data):
-    """Create custom tooltips based on field path, value, and context"""
+# Dynamic tooltips function
+def dynamic_tooltip(path, value, data):
+    """Generate contextual tooltips based on field path and value."""
     
-    # Score tooltips for names based on length
-    if path.endswith(".name") and isinstance(value, str):
-        score = len(value) * 2  # Simple scoring: 2 points per character
-        return {
-            "text": f"Name score: {score} points",
-            "icon": "👤"
-        }
-    
-    # Age category tooltips
-    if path.endswith(".age") and isinstance(value, int):
-        if value < 25:
+    # User-related fields with contextual info
+    if path.startswith("user."):
+        user_name = data.get("user", {}).get("name", "Unknown")
+        
+        if path.endswith(".name"):
             return {
-                "text": "Category: Young Adult",
-                "icon": "🟢"
+                "text": f"👤 User profile: {len(value)} characters long",
+                "icon": "👤"
             }
-        elif value < 30:
-            return {
-                "text": "Category: Adult", 
-                "icon": "🟡"
+        elif path.endswith(".role"):
+            role_info = {
+                "admin": {"icon": "👑", "desc": "Full system access"},
+                "user": {"icon": "👤", "desc": "Standard user access"},
+                "guest": {"icon": "👁️", "desc": "Read-only access"}
             }
-        else:
+            info = role_info.get(value, {"icon": "❓", "desc": "Unknown role"})
             return {
-                "text": "Category: Mature Adult",
-                "icon": "🟠"
+                "text": f"{info['desc']} for {user_name}",
+                "icon": info["icon"]
+            }
+        elif path.endswith(".permissions"):
+            return {
+                "text": f"🔐 {user_name} has {len(value)} permission(s): {', '.join(value)}",
+                "icon": "🔐"
+            }
+        elif path.endswith(".last_login"):
+            return {
+                "text": f"🕒 {user_name}'s last activity: {value}",
+                "icon": "🕒"
             }
     
-    # Spirit animal rarity tooltips
-    if path.endswith(".spirit_animal") and isinstance(value, str):
-        rarity_map = {
-            "dog": {"text": "Common (found in 60% of profiles)", "icon": "🐕"},
-            "cat": {"text": "Uncommon (found in 25% of profiles)", "icon": "🐱"}, 
-            "cow": {"text": "Rare (found in 5% of profiles)", "icon": "🐄"},
-            "dragon": {"text": "Legendary (found in 0.1% of profiles)", "icon": "🐉"}
-        }
-        return rarity_map.get(value, {"text": "Unknown rarity", "icon": "❓"})
+    # System metrics with status indicators
+    elif path.startswith("system."):
+        if "usage" in path:
+            percentage = f"{value * 100:.1f}%"
+            if value > 0.9:
+                return {"text": f"🔴 Critical usage: {percentage}", "icon": "🔴"}
+            elif value > 0.7:
+                return {"text": f"🟡 High usage: {percentage}", "icon": "🟡"}
+            else:
+                return {"text": f"🟢 Normal usage: {percentage}", "icon": "🟢"}
+        elif path.endswith(".uptime"):
+            if value >= 99.9:
+                return {"text": f"🟢 Excellent uptime: {value}%", "icon": "🟢"}
+            elif value >= 99.0:
+                return {"text": f"🟡 Good uptime: {value}%", "icon": "🟡"}
+            else:
+                return {"text": f"🔴 Poor uptime: {value}%", "icon": "🔴"}
     
-    # Array element tooltips
-    if path.startswith("[") and "].name" in path:
-        # Extract index from path like "[0].name" 
-        try:
-            index = int(path.split("]")[0][1:])
-            return {
-                "text": f"Person #{index + 1} in the list",
-                "icon": "🔢"
-            }
-        except:
-            pass
+    # Performance metrics
+    elif path.startswith("metrics."):
+        if path.endswith(".error_rate"):
+            if value > 0.01:  # > 1%
+                return {"text": f"🚨 High error rate: {value * 100:.2f}%", "icon": "🚨"}
+            elif value > 0.005:  # > 0.5%
+                return {"text": f"⚠️ Elevated error rate: {value * 100:.3f}%", "icon": "⚠️"}
+            else:
+                return {"text": f"✅ Normal error rate: {value * 100:.3f}%", "icon": "✅"}
+        elif path.endswith(".response_time_ms"):
+            if value > 100:
+                return {"text": f"🐌 Slow response: {value}ms", "icon": "🐌"}
+            elif value > 50:
+                return {"text": f"🟡 Moderate response: {value}ms", "icon": "🟡"}
+            else:
+                return {"text": f"⚡ Fast response: {value}ms", "icon": "⚡"}
+    
+    # Configuration with security notes
+    elif path.startswith("config."):
+        if path.endswith(".ssl"):
+            if value:
+                return {"text": "🔒 SSL encryption enabled", "icon": "🔒"}
+            else:
+                return {"text": "⚠️ SSL encryption disabled", "icon": "⚠️"}
+        elif path.endswith(".port"):
+            return {"text": f"🔌 Network port: {value}", "icon": "🔌"}
     
     return None
 
-st.write("**Dynamic Data:**")
-st.json(dynamic_data)
+st.subheader("📊 Interactive JSON Viewer")
+st.markdown("🎯 **Try this:** Fill out the form above, then expand/collapse JSON nodes below. Your form data should remain intact!")
 
-selected_dynamic = json_viewer(
-    data=dynamic_data,
-    dynamic_tooltips=create_dynamic_tooltip,
-    height=300,
-    key="dynamic_tooltip_demo"
-)
+# Create columns for layout
+col1, col2 = st.columns([2, 1])
 
-if selected_dynamic:
-    st.write(f"**Selected:** {selected_dynamic.get('path')} = {selected_dynamic.get('value')}")
-    if selected_dynamic.get('help_text'):
-        st.write(f"**Dynamic Tooltip:** {selected_dynamic.get('help_text')}")
-
-st.subheader("Tooltip Configuration Examples")
-st.write("Different tooltip configurations using Tippy.js options:")
-
-# Initialize selection variables
-selected1 = selected2 = selected3 = selected4 = selected_advanced = None
-
-# Create tabs for different configurations
-tab1, tab2, tab3, tab4 = st.tabs(["Default", "Interactive", "Animated", "Positioned"])
-
-with tab1:
-    st.write("**Default Configuration**: Standard tooltips with fade animation")
-    selected1 = json_viewer(
-        data=sample_data,
+with col1:
+    # Display the JSON viewer
+    selected = json_viewer(
+        data=data,
         help_text=help_text,
         tags=tags,
-        tooltip_icon="💡",  # Custom global icon
-        height=400,
-        key="default_config"
-    ) or None
-
-with tab2:
-    st.write("**Interactive Tooltips**: Hoverable tooltips with custom styling")
-    selected2 = json_viewer(
-        data=sample_data,
-        help_text=help_text,
-        tags=tags,
+        dynamic_tooltips=dynamic_tooltip,
         tooltip_config={
-            "interactive": True,
+            "placement": "auto",
+            "animation": "fade",
             "delay": [200, 100],
-            "maxWidth": 300,
-            "hideOnClick": False,
-            "trigger": "mouseenter"
+            "interactive": True,
+            "maxWidth": 400
         },
-        height=400,
-        key="interactive_config"
-    ) or None
+        height=600,
+        key="json_viewer_demo"  # Add a key for better state management
+    )
 
-with tab3:
-    st.write("**Animated Tooltips**: Scale animation with custom timing")
-    selected3 = json_viewer(
-        data=sample_data,
-        help_text=help_text,
-        tags=tags,
-        tooltip_config={
-            "animation": "scale",
-            "duration": [400, 200],
-            "delay": 300,
-            "arrow": True
-        },
-        height=400,
-        key="animated_config"
-    ) or None
-
-with tab4:
-    st.write("**Positioned Tooltips**: Right-side placement with custom width")
-    selected4 = json_viewer(
-        data=sample_data,
-        help_text=help_text,
-        tags=tags,
-        tooltip_config={
-            "placement": "right",
-            "maxWidth": 200,
-            "animation": "shift-away",
-            "sticky": True
-        },
-        height=400,
-        key="positioned_config"
-    ) or None
-
-st.subheader("Advanced Example: Context-Aware Tooltips")
-st.write("Combining dynamic tooltips with custom configuration:")
-
-# Advanced example with both dynamic tooltips and custom config
-advanced_data = {
-    "performance": {
-        "cpu_usage": 85.2,
-        "memory_usage": 67.8,
-        "disk_usage": 45.3
-    },
-    "alerts": [
-        {"level": "warning", "message": "High CPU usage detected"},
-        {"level": "info", "message": "System running normally"}
-    ]
-}
-
-def advanced_tooltip(path, value, data):
-    if path.endswith("_usage"):
-        if value > 80:
-            return {
-                "text": f"Critical: {value}% - Immediate attention required",
-                "icon": "🚨"
-            }
-        elif value > 60:
-            return {
-                "text": f"Warning: {value}% - Monitor closely", 
-                "icon": "⚠️"
-            }
-        else:
-            return {
-                "text": f"Normal: {value}% - Operating within limits",
-                "icon": "✅"
-            }
+with col2:
+    st.subheader("🎛️ Field Selection")
     
-    if path.endswith(".level"):
-        level_info = {
-            "warning": {"text": "Requires attention - investigate potential issues", "icon": "⚠️"},
-            "error": {"text": "Critical - immediate action needed", "icon": "🚨"},
-            "info": {"text": "Informational - no action required", "icon": "ℹ️"}
-        }
-        return level_info.get(value, {"text": "Unknown alert level", "icon": "❓"})
+    if selected:
+        st.success("✅ Field Selected!")
+        st.json({
+            "Path": selected['path'],
+            "Value": selected['value'],
+            "Type": type(selected['value']).__name__,
+            "Help": selected.get('help_text', 'No help available'),
+            "Tag": selected.get('tag', 'No tag')
+        })
+    else:
+        st.info("👆 Click on any field to see details")
     
-    return None
-
-selected_advanced = json_viewer(
-    data=advanced_data,
-    dynamic_tooltips=advanced_tooltip,
-    tooltip_config={
-        "placement": "auto",
-        "interactive": True,
-        "maxWidth": 350,
-        "animation": "shift-toward",
-        "delay": [100, 50],
-        "duration": [300, 200]
-    },
-    height=350,
-    key="advanced_tooltip_demo"
-) or None
-
-# Show selected field information from any of the viewers
-selected_fields = [selected1, selected2, selected3, selected4, selected_advanced]
-active_selection = next((sel for sel in selected_fields if sel), None)
-
-if active_selection:
-    st.subheader("Selected Field Information")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.write("**Path:**", active_selection.get("path"))
-        st.write("**Value:**", active_selection.get("value"))
-    
-    with col2:
-        if active_selection.get("help_text"):
-            st.write("**Help Text:**", active_selection.get("help_text"))
-        if active_selection.get("tag"):
-            st.write("**Tag:**", active_selection.get("tag"))
+    st.subheader("📈 Stats")
+    st.metric("Total Fields", len(help_text))
+    st.metric("Tagged Fields", len(tags))
+    st.metric("Dynamic Tooltips", "✅ Enabled")
 
 # Instructions
-st.subheader("How to Use")
-st.write("""
-1. **Expand/Collapse**: Click on the `{` or `[` brackets to expand or collapse objects and arrays
-2. **Select Fields**: Click on any field value to select it and see details below
-3. **Help Text**: Hover over the ℹ️ icon to see help text for specific fields
-4. **Tags**: Fields with tags will show colored labels for easy categorization
-5. **Field Types**: Different value types are color-coded (strings in green, numbers in blue, etc.)
+st.subheader("🧪 How to Test State Preservation")
+st.markdown("""
+1. **Fill out the form** at the top of the page (text input, counter, dropdown, etc.)
+2. **Expand and collapse** different sections in the JSON viewer below
+3. **Verify** that your form inputs remain unchanged
+
+If the expand/collapse arrows cause the page to refresh, your form data would be lost. 
+This demonstrates that the component properly handles internal state without triggering Streamlit reruns.
 """)
 
-# Code example
-st.subheader("Code Example")
-st.code('''
-from streamlit_json_tip import json_viewer
+# Feature examples section
+st.subheader("🚀 Features Demonstrated")
 
-# Static tooltips with custom icon
-data = {"name": "John", "age": 30}
-help_text = {"name": "The person's full name", "age": "Age in years"}
+col1, col2, col3 = st.columns(3)
 
-selected = json_viewer(data=data, help_text=help_text, tooltip_icon="💡")
+with col1:
+    st.markdown("""
+    **🏷️ Field Tags**
+    - PII: Personal data
+    - AUTH: Authentication 
+    - CONFIG: Configuration
+    - METRIC: Performance metrics
+    - SECURITY: Security settings
+    - FEATURE: Feature flags
+    """)
 
-# Dynamic tooltips with custom icons per field
-users = [{"name": "john", "score": 85}, {"name": "jake", "score": 92}]
+with col2:
+    st.markdown("""
+    **💡 Dynamic Tooltips**
+    - Context-aware help text
+    - Custom icons per field
+    - Value-based conditions
+    - Cross-field references
+    - Status indicators
+    """)
 
-def dynamic_tooltip_with_icons(path, value, full_data):
-    if path.endswith(".name"):
-        return {
-            "text": f"Name length: {len(value)} characters",
-            "icon": "👤"
-        }
-    elif path.endswith(".score"):
-        return {
-            "text": f"Performance score: {value}/100",
-            "icon": "📊" if value >= 80 else "⚠️"
-        }
-    return None
+with col3:
+    st.markdown("""
+    **🎨 Interactive Features**
+    - Expand/collapse nodes
+    - Click to select fields
+    - Professional tooltips
+    - Syntax highlighting
+    - Responsive design
+    """)
 
-selected = json_viewer(data=users, dynamic_tooltips=dynamic_tooltip_with_icons)
-
-# Custom tooltip configuration with global icon
-json_viewer(
-    data=data,
-    help_text=help_text,
-    tooltip_icon="❓",              # Global tooltip icon
-    tooltip_config={
-        "placement": "right",           # Position: top, bottom, left, right, auto
-        "animation": "scale",           # Animation: fade, shift-away, scale, etc.
-        "delay": [300, 100],           # [show_delay, hide_delay] in ms
-        "interactive": True,            # Allow hovering over tooltip
-        "maxWidth": 250,               # Max width in pixels
-        "sticky": True                 # Tooltip follows cursor
-    }
-)
-''', language='python')
+st.markdown("---")
+st.markdown("*Built with ❤️ using Streamlit and Tippy.js*")
