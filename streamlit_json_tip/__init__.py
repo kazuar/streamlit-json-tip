@@ -20,6 +20,7 @@ def json_viewer(
     dynamic_tooltips=None,
     tooltip_config=None,
     tooltip_icon="ℹ️",
+    enable_field_selection=True,
     height=400,
     key=None
 ):
@@ -53,6 +54,9 @@ def json_viewer(
         - sticky: bool, default False (tooltip follows cursor)
     tooltip_icon : str, optional
         Default icon to display for tooltips (default: "ℹ️")
+    enable_field_selection : bool, optional
+        Whether clicking on fields triggers selection and Streamlit updates (default: True)
+        Set to False to prevent page refreshes when clicking on field values
     height : int, optional
         Height of the component in pixels (default: 400)
     key : str, optional
@@ -167,6 +171,7 @@ def json_viewer(
         tooltip_config=final_tooltip_config,
         tooltip_icon=tooltip_icon,
         tooltip_icons=computed_tooltip_icons,
+        enable_field_selection=enable_field_selection,
         height=height,
         key=key,
         default=None
