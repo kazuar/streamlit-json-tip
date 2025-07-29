@@ -5,6 +5,8 @@
   background-color: #f8f9fa;
   border-radius: 4px;
   overflow: auto;
+  padding: 16px 8px 24px 0px;
+  box-sizing: border-box;
 }
 
 .json-object, .json-array {
@@ -101,6 +103,7 @@
 .json-closing-bracket {
   margin-left: -20px;
   padding-left: 20px;
+  margin-bottom: 4px;
 }
 
 .json-summary {
