@@ -84,11 +84,15 @@ data = {
     }
 }
 
-# Help text for tooltips
+# Help text for tooltips (including multiple tooltips example)
 help_text = {
     "user.name": "Full name of the user",
     "user.email": "Primary email address for notifications",
-    "user.id": "Unique user identifier in the system",
+    "user.id": [
+        {"text": "Unique user identifier in the system", "icon": "🆔"},
+        {"text": "Used for database lookups and API calls", "icon": "🔗"},
+        {"text": "Cannot be changed after account creation", "icon": "🔒"}
+    ],
     "user.role": "User's permission level (admin, user, guest)",
     "user.last_login": "Timestamp of user's last login",
     "user.preferences.theme": "UI theme preference (light/dark)",
@@ -97,7 +101,11 @@ help_text = {
     "user.permissions": "List of user's system permissions",
     "system.version": "Current application version",
     "system.environment": "Deployment environment",
-    "system.uptime": "System uptime percentage",
+    "system.uptime": [
+        {"text": "System uptime percentage", "icon": "⏱️"},
+        {"text": "Target: >99.9% for production", "icon": "🎯"},
+        {"text": "Current status: Excellent", "icon": "✅"}
+    ],
     "system.memory_usage": "Current memory usage as decimal (0.78 = 78%)",
     "system.cpu_usage": "Current CPU usage as decimal",
     "metrics.requests_per_second": "Average requests handled per second",
@@ -188,12 +196,24 @@ def dynamic_tooltip(path, value, data):
             else:
                 return {"text": f"🟢 Normal usage: {percentage}", "icon": "🟢"}
         elif path.endswith(".uptime"):
+            # Example of dynamic multiple tooltips
             if value >= 99.9:
-                return {"text": f"🟢 Excellent uptime: {value}%", "icon": "🟢"}
+                return [
+                    {"text": f"Excellent uptime: {value}%", "icon": "🟢"},
+                    {"text": "SLA compliance: Met", "icon": "✅"},
+                    {"text": "No action needed", "icon": "👍"}
+                ]
             elif value >= 99.0:
-                return {"text": f"🟡 Good uptime: {value}%", "icon": "🟡"}
+                return [
+                    {"text": f"Good uptime: {value}%", "icon": "🟡"},
+                    {"text": "SLA compliance: At risk", "icon": "⚠️"}
+                ]
             else:
-                return {"text": f"🔴 Poor uptime: {value}%", "icon": "🔴"}
+                return [
+                    {"text": f"Poor uptime: {value}%", "icon": "🔴"},
+                    {"text": "SLA compliance: Failed", "icon": "❌"},
+                    {"text": "Immediate action required", "icon": "🚨"}
+                ]
     
     # Performance metrics
     elif path.startswith("metrics."):
@@ -227,6 +247,7 @@ def dynamic_tooltip(path, value, data):
 st.subheader("📊 Interactive JSON Viewer")
 st.markdown("🎯 **Try this:** Fill out the form above, then expand/collapse JSON nodes below. Your form data should remain intact!")
 st.markdown("📋 **New:** Click the copy button in the top-right corner of the JSON viewer to copy the raw JSON data to your clipboard!")
+st.markdown("💡 **Multiple Tooltips:** Some fields now have multiple tooltip icons - hover over each one for different information!")
 
 # Add field selection toggle
 field_selection_enabled = st.checkbox(
@@ -318,6 +339,7 @@ with col2:
     - Value-based conditions
     - Cross-field references
     - Status indicators
+    - **🔄 Multiple tooltips per field**
     """)
 
 with col3:
