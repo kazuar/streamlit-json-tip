@@ -11,6 +11,7 @@ function JsonViewer(props) {
   const [expandedPaths, setExpandedPaths] = useState(new Set())
   const [isInitialized, setIsInitialized] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [copyFeedback, setCopyFeedback] = useState(null)
   
   const { 
     data, 
@@ -163,6 +164,19 @@ function JsonViewer(props) {
       }
     }
   }, [])
+
+  const handleCopyToClipboard = useCallback(async () => {
+    try {
+      const jsonString = JSON.stringify(data, null, 2)
+      await navigator.clipboard.writeText(jsonString)
+      setCopyFeedback('✅ Copied!')
+      setTimeout(() => setCopyFeedback(null), 2000)
+    } catch (err) {
+      setCopyFeedback('❌ Failed to copy')
+      setTimeout(() => setCopyFeedback(null), 2000)
+      console.error('Failed to copy JSON:', err)
+    }
+  }, [data])
 
   const renderValue = (value, path = "") => {
     if (value === null) {
@@ -327,6 +341,21 @@ function JsonViewer(props) {
   
   return (
     <div className={`json-viewer ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      <div className="json-header">
+        <Tippy 
+          content={copyFeedback || "copy"}
+          theme={isDarkMode ? 'dark' : 'light'}
+          {...tooltip_config}
+        >
+          <button 
+            className="copy-button"
+            onClick={handleCopyToClipboard}
+            disabled={!data}
+          >
+            {copyFeedback || '📋'}
+          </button>
+        </Tippy>
+      </div>
       {renderValue(data)}
     </div>
   )

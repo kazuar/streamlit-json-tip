@@ -7,6 +7,48 @@
   overflow: auto;
   padding: 16px 8px 24px 0px;
   box-sizing: border-box;
+  position: relative;
+}
+
+.json-header {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+.copy-button {
+  background-color: #ffffff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-button:hover {
+  background-color: #f3f4f6;
+  border-color: #d0d7de;
+  box-shadow: 0 1px 0 rgba(27, 31, 36, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.copy-button:active {
+  background-color: #e5e5e5;
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+.copy-button:disabled {
+  background-color: #f6f8fa;
+  color: #8c959f;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .json-object, .json-array {
@@ -143,6 +185,26 @@
 .json-viewer.dark-mode {
   background-color: #0e1117;
   color: #f0f6fc;
+}
+
+.json-viewer.dark-mode .copy-button {
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  color: #f0f6fc;
+}
+
+.json-viewer.dark-mode .copy-button:hover {
+  background-color: #30363d;
+  border-color: #6e7681;
+}
+
+.json-viewer.dark-mode .copy-button:active {
+  background-color: #262c36;
+}
+
+.json-viewer.dark-mode .copy-button:disabled {
+  background-color: #161b22;
+  color: #6e7681;
 }
 
 .json-viewer.dark-mode .json-object-content,
