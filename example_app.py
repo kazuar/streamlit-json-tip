@@ -226,6 +226,7 @@ def dynamic_tooltip(path, value, data):
 
 st.subheader("📊 Interactive JSON Viewer")
 st.markdown("🎯 **Try this:** Fill out the form above, then expand/collapse JSON nodes below. Your form data should remain intact!")
+st.markdown("📋 **New:** Click the copy button in the top-right corner of the JSON viewer to copy the raw JSON data to your clipboard!")
 
 # Add field selection toggle
 field_selection_enabled = st.checkbox(
@@ -278,6 +279,9 @@ with col2:
     st.metric("Total Fields", len(help_text))
     st.metric("Tagged Fields", len(tags))
     st.metric("Dynamic Tooltips", "✅ Enabled")
+    
+    st.subheader("📋 Copy Feature")
+    st.info("Click the 📋 button in the JSON viewer to copy the raw JSON data to your clipboard!")
 
 # Instructions
 st.subheader("🧪 How to Test State Preservation")
@@ -324,6 +328,7 @@ with col3:
     - Professional tooltips
     - Syntax highlighting
     - Responsive design
+    - **📋 Copy to clipboard**
     """)
 
 st.markdown("---")
