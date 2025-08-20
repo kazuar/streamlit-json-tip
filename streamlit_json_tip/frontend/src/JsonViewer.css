@@ -166,6 +166,16 @@
   opacity: 1;
 }
 
+.multiple-tooltips {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.multiple-tooltips .help-text {
+  margin: 0;
+}
+
 .tag {
   background-color: #0969da;
   color: white;

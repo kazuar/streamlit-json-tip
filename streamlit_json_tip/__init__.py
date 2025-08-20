@@ -32,14 +32,17 @@ def json_viewer(
     data : dict
         The JSON data to display
     help_text : dict, optional
-        Dictionary mapping field paths to help text
+        Dictionary mapping field paths to help text. Can be:
+        - str: Simple tooltip text
+        - list: Multiple tooltips, each item should be {"text": "...", "icon": "..."}
     tags : dict, optional
         Dictionary mapping field paths to tags/labels
     dynamic_tooltips : function, optional
-        Function that takes (field_path, field_value, full_data) and returns tooltip text or dict.
+        Function that takes (field_path, field_value, full_data) and returns tooltip text, dict, or list.
         Can return:
         - str: tooltip text (uses default icon)
         - dict: {"text": str, "icon": str} for custom tooltip text and icon
+        - list: [{"text": str, "icon": str}] for multiple tooltips on the same field
     tooltip_config : dict, optional
         Configuration for Tippy.js tooltips. Available options:
         - placement: str, default "top" (top, bottom, left, right, auto)
@@ -113,6 +116,7 @@ def json_viewer(
     # Pre-compute dynamic tooltips if function provided
     computed_help_text = help_text.copy() if help_text else {}
     computed_tooltip_icons = {}
+    computed_multiple_tooltips = {}
     
     if dynamic_tooltips and callable(dynamic_tooltips):
         def _collect_tooltips(obj, current_path=""):
@@ -121,7 +125,10 @@ def json_viewer(
                     field_path = f"{current_path}.{key}" if current_path else key
                     tooltip_result = dynamic_tooltips(field_path, value, data)
                     if tooltip_result:
-                        if isinstance(tooltip_result, dict):
+                        if isinstance(tooltip_result, list):
+                            # Multiple tooltips returned from dynamic function
+                            computed_multiple_tooltips[field_path] = tooltip_result
+                        elif isinstance(tooltip_result, dict):
                             if "text" in tooltip_result:
                                 computed_help_text[field_path] = tooltip_result["text"]
                             if "icon" in tooltip_result:
@@ -134,7 +141,10 @@ def json_viewer(
                     field_path = f"{current_path}[{i}]"
                     tooltip_result = dynamic_tooltips(field_path, item, data)
                     if tooltip_result:
-                        if isinstance(tooltip_result, dict):
+                        if isinstance(tooltip_result, list):
+                            # Multiple tooltips returned from dynamic function
+                            computed_multiple_tooltips[field_path] = tooltip_result
+                        elif isinstance(tooltip_result, dict):
                             if "text" in tooltip_result:
                                 computed_help_text[field_path] = tooltip_result["text"]
                             if "icon" in tooltip_result:
@@ -144,6 +154,17 @@ def json_viewer(
                     _collect_tooltips(item, field_path)
         
         _collect_tooltips(data)
+    
+    # Process static help_text to identify multiple tooltips
+    for field_path, tooltip_data in computed_help_text.copy().items():
+        if isinstance(tooltip_data, list):
+            # Multiple tooltips format: [{"text": "...", "icon": "..."}]
+            computed_multiple_tooltips[field_path] = tooltip_data
+            # Remove from single tooltip dict as it's now handled as multiple
+            del computed_help_text[field_path]
+            # Remove any single icon that might exist
+            if field_path in computed_tooltip_icons:
+                del computed_tooltip_icons[field_path]
     
     # Set default tooltip configuration
     default_tooltip_config = {
@@ -171,6 +192,7 @@ def json_viewer(
         tooltip_config=final_tooltip_config,
         tooltip_icon=tooltip_icon,
         tooltip_icons=computed_tooltip_icons,
+        multiple_tooltips=computed_multiple_tooltips,
         enable_field_selection=enable_field_selection,
         height=height,
         key=key,

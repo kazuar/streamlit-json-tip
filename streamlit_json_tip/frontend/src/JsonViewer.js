@@ -20,6 +20,7 @@ function JsonViewer(props) {
     tooltip_config = {}, 
     tooltip_icon = "ℹ️", 
     tooltip_icons = {},
+    multiple_tooltips = {},
     enable_field_selection = true
   } = props.args
 
@@ -178,6 +179,57 @@ function JsonViewer(props) {
     }
   }, [data])
 
+  const renderTooltips = (path) => {
+    // Check if this field has multiple tooltips
+    if (multiple_tooltips[path] && Array.isArray(multiple_tooltips[path])) {
+      return (
+        <span className="multiple-tooltips">
+          {multiple_tooltips[path].map((tooltip, index) => (
+            <Tippy 
+              key={index}
+              content={tooltip.text}
+              theme={isDarkMode ? 'dark' : 'light'}
+              {...tooltip_config}
+            >
+              <span 
+                className="help-text"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+              >
+                {tooltip.icon || tooltip_icon}
+              </span>
+            </Tippy>
+          ))}
+        </span>
+      )
+    }
+    
+    // Single tooltip (existing logic)
+    if (help_text[path]) {
+      return (
+        <Tippy 
+          content={help_text[path]}
+          theme={isDarkMode ? 'dark' : 'light'}
+          {...tooltip_config}
+        >
+          <span 
+            className="help-text"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+          >
+            {tooltip_icons[path] || tooltip_icon}
+          </span>
+        </Tippy>
+      )
+    }
+    
+    return null
+  }
+
   const renderValue = (value, path = "") => {
     if (value === null) {
       return <span className="json-null">null</span>
@@ -233,23 +285,7 @@ function JsonViewer(props) {
                       }}
                     >
                       {renderValue(item, itemPath)}
-                      {help_text[itemPath] && (
-                        <Tippy 
-                          content={help_text[itemPath]}
-                          theme={isDarkMode ? 'dark' : 'light'}
-                          {...tooltip_config}
-                        >
-                          <span 
-                            className="help-text"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                            }}
-                          >
-                            {tooltip_icons[itemPath] || tooltip_icon}
-                          </span>
-                        </Tippy>
-                      )}
+                      {renderTooltips(itemPath)}
                       {tags[itemPath] && (
                         <span className="tag">{tags[itemPath]}</span>
                       )}
@@ -305,17 +341,7 @@ function JsonViewer(props) {
                       }}
                     >
                       {renderValue(value[key], keyPath)}
-                      {help_text[keyPath] && (
-                        <Tippy 
-                          content={help_text[keyPath]}
-                          theme={isDarkMode ? 'dark' : 'light'}
-                          {...tooltip_config}
-                        >
-                          <span className="help-text">
-                            {tooltip_icons[keyPath] || tooltip_icon}
-                          </span>
-                        </Tippy>
-                      )}
+                      {renderTooltips(keyPath)}
                       {tags[keyPath] && (
                         <span className="tag">{tags[keyPath]}</span>
                       )}
