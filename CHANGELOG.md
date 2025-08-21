@@ -5,39 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.7] - 2025-01-29
+## [0.2.8] - 2025-08-20
+
+- **Copy json**: Copy json from the view.
+- **Multiple tooltips**: Support multiple tooltips on the same json field.
+
+
+## [0.2.7] - 2025-07-29
 
 - **Fix interactions**: Additional fixing for page refresh and keeping state when interacting with the component.
 
-## [0.2.6] - 2025-01-28
+## [0.2.6] - 2025-07-28
 
 - **Fix streamlit state**: Additional fixing for page refresh and keeping state
 - **Style updates**: Align default font and softer text color in dark mode.
 
-## [0.2.5] - 2025-01-28
+## [0.2.5] - 2025-07-28
 
 - **Fix streamlit state**: Fix refreshing streamlit state when clicking on the component.
 - **Fix component padding**: Fix component padding to avoid cutting off the end bracket of the json viewer.
 
-## [0.2.4] - 2025-01-25
+## [0.2.4] - 2025-07-25
 
 - **Github actions**: Add and test github actions
 
-## [0.2.3] - 2025-01-25
+## [0.2.3] - 2025-07-25
 
 - **JSON viewer padding**: Remove padding
 
-## [0.2.2] - 2025-01-25
+## [0.2.2] - 2025-07-25
 
 - **PyPI Image Display**: Fix image url
 
-## [0.2.1] - 2025-01-25
+## [0.2.1] - 2025-07-25
 
 ### 🔧 Fixed
 - **PyPI Image Display**: Updated README to use GitHub raw URL for example image instead of local path
 - **Documentation**: Example image now displays properly on PyPI package page
 
-## [0.2.0] - 2025-01-25
+## [0.2.0] - 2025-07-25
 
 ### ✨ Added
 - **Custom Tooltip Icons**: New `tooltip_icon` parameter allows setting a global icon for all tooltips (default: "ℹ️")
